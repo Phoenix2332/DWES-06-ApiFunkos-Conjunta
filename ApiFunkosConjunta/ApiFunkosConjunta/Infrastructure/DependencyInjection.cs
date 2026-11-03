@@ -15,6 +15,10 @@ public static class DependencyInjection {
 
         services.AddScoped<ICategoriaService, CategoriaService>();
 
+        services.AddScoped<IProveedorRepository, ProveedorRepository>();
+
+        services.AddScoped<IProveedorService, ProveedorService>();
+
         return services;
     }
 }
