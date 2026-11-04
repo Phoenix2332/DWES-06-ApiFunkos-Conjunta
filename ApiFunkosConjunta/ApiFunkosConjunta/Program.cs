@@ -17,10 +17,15 @@ if (app.Environment.IsDevelopment()) await CategoriaSeeder.SeedAsync(app.Service
 
 if (app.Environment.IsDevelopment()) await ProveedorSeeder.SeedAsync(app.Services);
 
+if (app.Environment.IsDevelopment()) await FunkoSeeder.SeedAsync(app.Services);
+
 if (app.Environment.IsDevelopment()) app.MapOpenApi();
 
 app.UseHttpsRedirection();
+
+app.UseAuthentication();
 app.UseAuthorization();
+
 app.MapControllers();
 
 app.Run();

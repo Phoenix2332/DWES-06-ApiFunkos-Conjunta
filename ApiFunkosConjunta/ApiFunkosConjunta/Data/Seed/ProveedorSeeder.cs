@@ -5,11 +5,9 @@ using MongoDB.Driver;
 namespace ApiFunkosConjunta.Data.Seed;
 
 public static class ProveedorSeeder {
-    // IDs fijos: si fueran aleatorios, los funkos referenciarían proveedores
-    // que ya no existen tras cada reinicio.
-    private static readonly ObjectId LogitechId = ObjectId.Parse("64b000000000000000000001");
-    private static readonly ObjectId IkeaId = ObjectId.Parse("64b000000000000000000002");
-    private static readonly ObjectId FunkoId = ObjectId.Parse("64b000000000000000000003");
+    private static readonly ObjectId _cladellasId = ObjectId.Parse("64b000000000000000000001");
+    private static readonly ObjectId _extendedId = ObjectId.Parse("64b000000000000000000002");
+    private static readonly ObjectId _kilumioId = ObjectId.Parse("64b000000000000000000003");
 
     public static async Task SeedAsync(IServiceProvider serviceProvider) {
         using var scope = serviceProvider.CreateScope();
@@ -18,27 +16,29 @@ public static class ProveedorSeeder {
 
         var proveedores = database.GetCollection<Proveedor>("proveedores");
 
-        await proveedores.DeleteManyAsync(FilterDefinition<Proveedor>.Empty);
-
-        await proveedores.InsertManyAsync(new[] {
+        var datosIniciales = new[] {
             new Proveedor {
-                Id = LogitechId,
-                Nombre = "Logitech",
-                Contacto = "exportaciones@logitech.com",
-                Pais = "Suiza"
+                Id = _cladellasId,
+                Nombre = "Grupo Cladellas",
+                Contacto = "exportaciones@grupocladellas.com",
+                Pais = "España"
             },
             new Proveedor {
-                Id = IkeaId,
-                Nombre = "Ikea",
-                Contacto = "proveedores@ikea.com",
-                Pais = "Suecia"
+                Id = _extendedId,
+                Nombre = "Extended Play",
+                Contacto = "exportaciones@extendedplay.com",
+                Pais = "España"
             },
             new Proveedor {
-                Id = FunkoId,
-                Nombre = "Funko",
-                Contacto = "ventas@funko.com",
-                Pais = "Estados Unidos"
+                Id = _kilumioId,
+                Nombre = "Kilumio",
+                Contacto = "exportaciones@kilumio.com",
+                Pais = "España"
             }
-        });
+        };
+
+        foreach (var proveedor in datosIniciales)
+            await proveedores.ReplaceOneAsync(p => p.Id == proveedor.Id, proveedor,
+                new ReplaceOptions { IsUpsert = true });
     }
 }

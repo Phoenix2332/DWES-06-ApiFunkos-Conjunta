@@ -28,7 +28,8 @@ public class ProveedorRepository(IMongoCollection<Proveedor> collection) : IProv
             return Result.Success<(IReadOnlyList<Proveedor>, int), DomainErrors>((proveedores, total));
         }
         catch (Exception) {
-            return Result.Failure<(IReadOnlyList<Proveedor>, int), DomainErrors>(ProveedorRepositoryError.GetAllError());
+            return Result.Failure<(IReadOnlyList<Proveedor>, int), DomainErrors>(ProveedorRepositoryError
+                .GetAllError());
         }
     }
 
@@ -62,7 +63,7 @@ public class ProveedorRepository(IMongoCollection<Proveedor> collection) : IProv
             var result = await collection.ReplaceOneAsync(p => p.Id == proveedor.Id, proveedor,
                 cancellationToken: cancellationToken);
 
-            return result.IsAcknowledged
+            return result.IsAcknowledged && result.MatchedCount > 0
                 ? Result.Success<Proveedor, DomainErrors>(proveedor)
                 : Result.Failure<Proveedor, DomainErrors>(ProveedorRepositoryError.UpdatedError());
         }
@@ -90,7 +91,8 @@ public class ProveedorRepository(IMongoCollection<Proveedor> collection) : IProv
                 new BsonRegularExpression($"^{Regex.Escape(nombre)}$", "i"));
 
             if (idExcluir is not null)
-                filtro = Builders<Proveedor>.Filter.And(filtro, Builders<Proveedor>.Filter.Ne(p => p.Id, idExcluir.Value));
+                filtro = Builders<Proveedor>.Filter.And(filtro,
+                    Builders<Proveedor>.Filter.Ne(p => p.Id, idExcluir.Value));
 
             var exists = await collection.CountDocumentsAsync(filtro, cancellationToken: cancellationToken) > 0;
 

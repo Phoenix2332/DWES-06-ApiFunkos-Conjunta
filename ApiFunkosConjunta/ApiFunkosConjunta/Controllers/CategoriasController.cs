@@ -1,21 +1,22 @@
 using ApiFunkosConjunta.Common.Pagination;
 using ApiFunkosConjunta.Dto.Categorias;
 using ApiFunkosConjunta.Errors;
-using ApiFunkosConjunta.Services.Interfaces;
+using ApiFunkosConjunta.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ApiFunkosConjunta.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class CategoriasController(ICategoriaService service) : ControllerBase {
+public class CategoriasController(ICatalogoService service) : ControllerBase {
     [HttpGet]
     public async Task<IActionResult> GetAll([FromQuery] string? nombre, [FromQuery] int pagina = 1,
         [FromQuery] int tamanoPagina = 10, CancellationToken cancellationToken = default) {
         if (pagina < 1 || tamanoPagina < 1 || tamanoPagina > 100)
             return BadRequest("Los parámetros de paginación no son válidos.");
 
-        var result = await service.GetAllAsync(nombre, pagina, tamanoPagina, cancellationToken);
+        var result = await service.GetAllCategoriasAsync(nombre, pagina, tamanoPagina, cancellationToken);
 
         if (result.IsFailure)
             return HandleError(result.Error);
@@ -32,7 +33,7 @@ public class CategoriasController(ICategoriaService service) : ControllerBase {
 
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(string id, CancellationToken cancellationToken) {
-        var result = await service.GetByIdAsync(id, cancellationToken);
+        var result = await service.GetCategoriaByIdAsync(id, cancellationToken);
 
         if (result.IsFailure)
             return HandleError(result.Error);
@@ -41,8 +42,9 @@ public class CategoriasController(ICategoriaService service) : ControllerBase {
     }
 
     [HttpPost]
+    [Authorize(Roles = "Administrador")]
     public async Task<IActionResult> Create([FromBody] CrearCategoriaDto dto, CancellationToken cancellationToken) {
-        var result = await service.CreateAsync(dto, cancellationToken);
+        var result = await service.CreateCategoriaAsync(dto, cancellationToken);
 
         if (result.IsFailure)
             return HandleError(result.Error);
@@ -51,9 +53,10 @@ public class CategoriasController(ICategoriaService service) : ControllerBase {
     }
 
     [HttpPut("{id}")]
+    [Authorize(Roles = "Administrador")]
     public async Task<IActionResult> Update(string id, [FromBody] ActualizarCategoriaDto dto,
         CancellationToken cancellationToken) {
-        var result = await service.UpdateAsync(id, dto, cancellationToken);
+        var result = await service.UpdateCategoriaAsync(id, dto, cancellationToken);
 
         if (result.IsFailure)
             return HandleError(result.Error);
@@ -62,8 +65,9 @@ public class CategoriasController(ICategoriaService service) : ControllerBase {
     }
 
     [HttpDelete("{id}")]
+    [Authorize(Roles = "Administrador")]
     public async Task<IActionResult> Delete(string id, CancellationToken cancellationToken) {
-        var result = await service.DeleteAsync(id, cancellationToken);
+        var result = await service.DeleteCategoriaAsync(id, cancellationToken);
 
         if (result.IsFailure)
             return HandleError(result.Error);
@@ -77,6 +81,7 @@ public class CategoriasController(ICategoriaService service) : ControllerBase {
         return error switch {
             ServiceErrors.NotFoundError => NotFound(error.Message),
             ServiceErrors.DuplicateNameError => Conflict(error.Message),
+            CatalogoServiceErrors.CategoriaConFunkosError => Conflict(error.Message),
             _ => Problem(title: "Se ha producido un error interno.",
                 statusCode: StatusCodes.Status500InternalServerError)
         };

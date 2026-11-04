@@ -1,7 +1,8 @@
 using ApiFunkosConjunta.Common.Pagination;
 using ApiFunkosConjunta.Dto.Proveedores;
 using ApiFunkosConjunta.Errors;
-using ApiFunkosConjunta.Services.Interfaces;
+using ApiFunkosConjunta.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Bson;
 
@@ -9,14 +10,14 @@ namespace ApiFunkosConjunta.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class ProveedoresController(IProveedorService service) : ControllerBase {
+public class ProveedoresController(ICatalogoService service) : ControllerBase {
     [HttpGet]
     public async Task<IActionResult> GetAll([FromQuery] string? nombre, [FromQuery] int pagina = 1,
         [FromQuery] int tamanoPagina = 10, CancellationToken cancellationToken = default) {
         if (pagina < 1 || tamanoPagina < 1 || tamanoPagina > 100)
             return BadRequest("Los parámetros de paginación no son válidos.");
 
-        var result = await service.GetAllAsync(nombre, pagina, tamanoPagina, cancellationToken);
+        var result = await service.GetAllProveedoresAsync(nombre, pagina, tamanoPagina, cancellationToken);
 
         if (result.IsFailure)
             return HandleError(result.Error);
@@ -36,7 +37,7 @@ public class ProveedoresController(IProveedorService service) : ControllerBase {
         if (!ObjectId.TryParse(id, out var objectId))
             return BadRequest("El id del proveedor no es válido.");
 
-        var result = await service.GetByIdAsync(objectId, cancellationToken);
+        var result = await service.GetProveedorByIdAsync(objectId, cancellationToken);
 
         if (result.IsFailure)
             return HandleError(result.Error);
@@ -45,8 +46,9 @@ public class ProveedoresController(IProveedorService service) : ControllerBase {
     }
 
     [HttpPost]
+    [Authorize(Roles = "Administrador")]
     public async Task<IActionResult> Create([FromBody] CrearProveedorDto dto, CancellationToken cancellationToken) {
-        var result = await service.CreateAsync(dto, cancellationToken);
+        var result = await service.CreateProveedorAsync(dto, cancellationToken);
 
         if (result.IsFailure)
             return HandleError(result.Error);
@@ -55,12 +57,13 @@ public class ProveedoresController(IProveedorService service) : ControllerBase {
     }
 
     [HttpPut("{id}")]
+    [Authorize(Roles = "Administrador")]
     public async Task<IActionResult> Update(string id, [FromBody] ActualizarProveedorDto dto,
         CancellationToken cancellationToken) {
         if (!ObjectId.TryParse(id, out var objectId))
             return BadRequest("El id del proveedor no es válido.");
 
-        var result = await service.UpdateAsync(objectId, dto, cancellationToken);
+        var result = await service.UpdateProveedorAsync(objectId, dto, cancellationToken);
 
         if (result.IsFailure)
             return HandleError(result.Error);
@@ -69,11 +72,12 @@ public class ProveedoresController(IProveedorService service) : ControllerBase {
     }
 
     [HttpDelete("{id}")]
+    [Authorize(Roles = "Administrador")]
     public async Task<IActionResult> Delete(string id, CancellationToken cancellationToken) {
         if (!ObjectId.TryParse(id, out var objectId))
             return BadRequest("El id del proveedor no es válido.");
 
-        var result = await service.DeleteAsync(objectId, cancellationToken);
+        var result = await service.DeleteProveedorAsync(objectId, cancellationToken);
 
         if (result.IsFailure)
             return HandleError(result.Error);
@@ -87,6 +91,7 @@ public class ProveedoresController(IProveedorService service) : ControllerBase {
         return error switch {
             ProveedorServiceErrors.NotFoundError => NotFound(error.Message),
             ProveedorServiceErrors.DuplicateNameError => Conflict(error.Message),
+            CatalogoServiceErrors.ProveedorConFunkosError => Conflict(error.Message),
             _ => Problem(title: "Se ha producido un error interno.",
                 statusCode: StatusCodes.Status500InternalServerError)
         };
