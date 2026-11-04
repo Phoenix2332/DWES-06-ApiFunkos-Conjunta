@@ -17,7 +17,7 @@ public class ProveedorControllerCasosCorrectosTest : ProveedorControllerTestBase
         var datos = CreatePagedResult();
 
         Service
-            .Setup(s => s.GetAllAsync(null, 1, 10, It.IsAny<CancellationToken>()))
+            .Setup(s => s.GetAllProveedoresAsync(null, 1, 10, It.IsAny<CancellationToken>()))
             .ReturnsAsync(
                 Result.Success<(IReadOnlyList<ProveedorDto> Proveedores, int Total), DomainErrors>(datos));
 
@@ -44,7 +44,7 @@ public class ProveedorControllerCasosCorrectosTest : ProveedorControllerTestBase
         var proveedor = CreateProveedor();
 
         Service
-            .Setup(s => s.GetByIdAsync(proveedor.Id, It.IsAny<CancellationToken>()))
+            .Setup(s => s.GetProveedorByIdAsync(proveedor.Id, It.IsAny<CancellationToken>()))
             .ReturnsAsync(Result.Success<ProveedorDto, DomainErrors>(proveedor));
 
         // Act
@@ -64,7 +64,7 @@ public class ProveedorControllerCasosCorrectosTest : ProveedorControllerTestBase
         var proveedor = CreateProveedor();
 
         Service
-            .Setup(s => s.CreateAsync(request, It.IsAny<CancellationToken>()))
+            .Setup(s => s.CreateProveedorAsync(request, It.IsAny<CancellationToken>()))
             .ReturnsAsync(Result.Success<ProveedorDto, DomainErrors>(proveedor));
 
         // Act
@@ -87,7 +87,7 @@ public class ProveedorControllerCasosCorrectosTest : ProveedorControllerTestBase
         var request = CreateUpdateRequest();
 
         Service
-            .Setup(s => s.UpdateAsync(proveedor.Id, request, It.IsAny<CancellationToken>()))
+            .Setup(s => s.UpdateProveedorAsync(proveedor.Id, request, It.IsAny<CancellationToken>()))
             .ReturnsAsync(Result.Success<ProveedorDto, DomainErrors>(proveedor));
 
         // Act
@@ -106,7 +106,7 @@ public class ProveedorControllerCasosCorrectosTest : ProveedorControllerTestBase
         var proveedor = CreateProveedor();
 
         Service
-            .Setup(s => s.DeleteAsync(proveedor.Id, It.IsAny<CancellationToken>()))
+            .Setup(s => s.DeleteProveedorAsync(proveedor.Id, It.IsAny<CancellationToken>()))
             .ReturnsAsync(Result.Success<bool, DomainErrors>(true));
 
         // Act

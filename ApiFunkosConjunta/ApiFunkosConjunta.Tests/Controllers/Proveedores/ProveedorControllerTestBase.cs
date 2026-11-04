@@ -1,18 +1,18 @@
 using ApiFunkosConjunta.Controllers;
 using ApiFunkosConjunta.Dto.Proveedores;
-using ApiFunkosConjunta.Services.Interfaces;
-using Moq;
+using ApiFunkosConjunta.Services;
 using MongoDB.Bson;
+using Moq;
 
 namespace ApiFunkosConjunta.Tests.Controllers.Proveedores;
 
 public abstract class ProveedorControllerTestBase {
     protected ProveedoresController Controller = null!;
-    protected Mock<IProveedorService> Service = null!;
+    protected Mock<ICatalogoService> Service = null!;
 
     [SetUp]
     public void SetUp() {
-        Service = new Mock<IProveedorService>();
+        Service = new Mock<ICatalogoService>();
         Controller = new ProveedoresController(Service.Object);
     }
 

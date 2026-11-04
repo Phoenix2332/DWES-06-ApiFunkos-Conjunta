@@ -1,17 +1,17 @@
 using ApiFunkosConjunta.Controllers;
 using ApiFunkosConjunta.Dto.Categorias;
-using ApiFunkosConjunta.Services.Interfaces;
+using ApiFunkosConjunta.Services;
 using Moq;
 
 namespace ApiFunkosConjunta.Tests.Controllers.Categorias;
 
 public abstract class CategoriaControllerTestBase {
     protected CategoriasController Controller = null!;
-    protected Mock<ICategoriaService> Service = null!;
+    protected Mock<ICatalogoService> Service = null!;
 
     [SetUp]
     public void SetUp() {
-        Service = new Mock<ICategoriaService>();
+        Service = new Mock<ICatalogoService>();
         Controller = new CategoriasController(Service.Object);
     }
 

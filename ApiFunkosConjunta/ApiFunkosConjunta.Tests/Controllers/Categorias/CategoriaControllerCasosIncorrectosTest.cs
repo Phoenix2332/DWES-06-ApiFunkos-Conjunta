@@ -22,7 +22,8 @@ public class CategoriaControllerCasosIncorrectosTest : CategoriaControllerTestBa
         resultado.Should().BeOfType<BadRequestObjectResult>();
 
         Service.Verify(
-            s => s.GetAllAsync(It.IsAny<string?>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<CancellationToken>()),
+            s => s.GetAllCategoriasAsync(It.IsAny<string?>(), It.IsAny<int>(), It.IsAny<int>(),
+                It.IsAny<CancellationToken>()),
             Times.Never);
     }
 
@@ -30,7 +31,7 @@ public class CategoriaControllerCasosIncorrectosTest : CategoriaControllerTestBa
     public async Task GetAll_ErrorServicio_RetornaInternalServerError() {
         // Arrange
         Service
-            .Setup(s => s.GetAllAsync(null, 1, 10, It.IsAny<CancellationToken>()))
+            .Setup(s => s.GetAllCategoriasAsync(null, 1, 10, It.IsAny<CancellationToken>()))
             .ReturnsAsync(
                 Result.Failure<(IReadOnlyList<CategoriaDto> Categorias, int Total), DomainErrors>(
                     ServiceError.GetAllError()));
@@ -51,7 +52,7 @@ public class CategoriaControllerCasosIncorrectosTest : CategoriaControllerTestBa
         const string Id = "abcdefghijk";
 
         Service
-            .Setup(s => s.GetByIdAsync(Id, It.IsAny<CancellationToken>()))
+            .Setup(s => s.GetCategoriaByIdAsync(Id, It.IsAny<CancellationToken>()))
             .ReturnsAsync(Result.Failure<CategoriaDto, DomainErrors>(ServiceError.NotFoundError(Id)));
 
         // Act
@@ -67,7 +68,7 @@ public class CategoriaControllerCasosIncorrectosTest : CategoriaControllerTestBa
         const string Id = "abcdefghijk";
 
         Service
-            .Setup(s => s.GetByIdAsync(Id, It.IsAny<CancellationToken>()))
+            .Setup(s => s.GetCategoriaByIdAsync(Id, It.IsAny<CancellationToken>()))
             .ReturnsAsync(Result.Failure<CategoriaDto, DomainErrors>(ServiceError.GetByIdError(Id)));
 
         // Act
@@ -86,7 +87,7 @@ public class CategoriaControllerCasosIncorrectosTest : CategoriaControllerTestBa
         var request = CreateCreateRequest();
 
         Service
-            .Setup(s => s.CreateAsync(request, It.IsAny<CancellationToken>()))
+            .Setup(s => s.CreateCategoriaAsync(request, It.IsAny<CancellationToken>()))
             .ReturnsAsync(Result.Failure<CategoriaDto, DomainErrors>(ServiceError.DuplicateNameError(request.Nombre)));
 
         // Act
@@ -102,7 +103,7 @@ public class CategoriaControllerCasosIncorrectosTest : CategoriaControllerTestBa
         var request = CreateCreateRequest();
 
         Service
-            .Setup(s => s.CreateAsync(request, It.IsAny<CancellationToken>()))
+            .Setup(s => s.CreateCategoriaAsync(request, It.IsAny<CancellationToken>()))
             .ReturnsAsync(Result.Failure<CategoriaDto, DomainErrors>(ServiceError.CreateError()));
 
         // Act
@@ -122,7 +123,7 @@ public class CategoriaControllerCasosIncorrectosTest : CategoriaControllerTestBa
         var request = CreateUpdateRequest();
 
         Service
-            .Setup(s => s.UpdateAsync(Id, request, It.IsAny<CancellationToken>()))
+            .Setup(s => s.UpdateCategoriaAsync(Id, request, It.IsAny<CancellationToken>()))
             .ReturnsAsync(Result.Failure<CategoriaDto, DomainErrors>(ServiceError.NotFoundError(Id)));
 
         // Act
@@ -139,7 +140,7 @@ public class CategoriaControllerCasosIncorrectosTest : CategoriaControllerTestBa
         var request = CreateUpdateRequest();
 
         Service
-            .Setup(s => s.UpdateAsync(Id, request, It.IsAny<CancellationToken>()))
+            .Setup(s => s.UpdateCategoriaAsync(Id, request, It.IsAny<CancellationToken>()))
             .ReturnsAsync(Result.Failure<CategoriaDto, DomainErrors>(ServiceError.DuplicateNameError(request.Nombre)));
 
         // Act
@@ -156,7 +157,7 @@ public class CategoriaControllerCasosIncorrectosTest : CategoriaControllerTestBa
         var request = CreateUpdateRequest();
 
         Service
-            .Setup(s => s.UpdateAsync(Id, request, It.IsAny<CancellationToken>()))
+            .Setup(s => s.UpdateCategoriaAsync(Id, request, It.IsAny<CancellationToken>()))
             .ReturnsAsync(Result.Failure<CategoriaDto, DomainErrors>(ServiceError.UpdateError(Id)));
 
         // Act
@@ -175,7 +176,7 @@ public class CategoriaControllerCasosIncorrectosTest : CategoriaControllerTestBa
         const string Id = "abcdefghijk";
 
         Service
-            .Setup(s => s.DeleteAsync(Id, It.IsAny<CancellationToken>()))
+            .Setup(s => s.DeleteCategoriaAsync(Id, It.IsAny<CancellationToken>()))
             .ReturnsAsync(Result.Failure<bool, DomainErrors>(ServiceError.NotFoundError(Id)));
 
         // Act
@@ -191,7 +192,7 @@ public class CategoriaControllerCasosIncorrectosTest : CategoriaControllerTestBa
         const string Id = "abcdefghijk";
 
         Service
-            .Setup(s => s.DeleteAsync(Id, It.IsAny<CancellationToken>()))
+            .Setup(s => s.DeleteCategoriaAsync(Id, It.IsAny<CancellationToken>()))
             .ReturnsAsync(Result.Failure<bool, DomainErrors>(ServiceError.DeleteError(Id)));
 
         // Act
@@ -217,7 +218,27 @@ public class CategoriaControllerCasosIncorrectosTest : CategoriaControllerTestBa
         resultado.Should().BeOfType<BadRequestObjectResult>();
 
         Service.Verify(
-            s => s.GetAllAsync(It.IsAny<string?>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<CancellationToken>()),
+            s => s.GetAllCategoriasAsync(It.IsAny<string?>(), It.IsAny<int>(), It.IsAny<int>(),
+                It.IsAny<CancellationToken>()),
             Times.Never);
+    }
+
+    [Test]
+    public async Task Delete_CategoriaConFunkosAsociados_RetornaConflict() {
+        // Arrange
+        const string Id = "abcdefghijk";
+
+        Service
+            .Setup(s => s.DeleteCategoriaAsync(Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Result.Failure<bool, DomainErrors>(CatalogoServiceError.CategoriaConFunkosError(Id)));
+
+        // Act
+        var resultado = await Controller.Delete(Id, CancellationToken.None);
+
+        // Assert
+        resultado.Should().BeOfType<ConflictObjectResult>();
+
+        var conflictResult = (ConflictObjectResult)resultado;
+        conflictResult.StatusCode.Should().Be(409);
     }
 }

@@ -17,7 +17,7 @@ public class CategoriaControllerCasosCorrectosTest : CategoriaControllerTestBase
         var datos = CreatePagedResult();
 
         Service
-            .Setup(s => s.GetAllAsync(null, 1, 10, It.IsAny<CancellationToken>()))
+            .Setup(s => s.GetAllCategoriasAsync(null, 1, 10, It.IsAny<CancellationToken>()))
             .ReturnsAsync(Result.Success<(IReadOnlyList<CategoriaDto> Categorias, int Total), DomainErrors>(datos));
 
         // Act
@@ -43,7 +43,7 @@ public class CategoriaControllerCasosCorrectosTest : CategoriaControllerTestBase
         var categoria = CreateCategoria();
 
         Service
-            .Setup(s => s.GetByIdAsync(categoria.Id, It.IsAny<CancellationToken>()))
+            .Setup(s => s.GetCategoriaByIdAsync(categoria.Id, It.IsAny<CancellationToken>()))
             .ReturnsAsync(Result.Success<CategoriaDto, DomainErrors>(categoria));
 
         // Act
@@ -63,7 +63,7 @@ public class CategoriaControllerCasosCorrectosTest : CategoriaControllerTestBase
         var categoria = CreateCategoria();
 
         Service
-            .Setup(s => s.CreateAsync(request, It.IsAny<CancellationToken>()))
+            .Setup(s => s.CreateCategoriaAsync(request, It.IsAny<CancellationToken>()))
             .ReturnsAsync(Result.Success<CategoriaDto, DomainErrors>(categoria));
 
         // Act
@@ -87,7 +87,7 @@ public class CategoriaControllerCasosCorrectosTest : CategoriaControllerTestBase
         var categoria = CreateCategoria();
 
         Service
-            .Setup(s => s.UpdateAsync(Id, request, It.IsAny<CancellationToken>()))
+            .Setup(s => s.UpdateCategoriaAsync(Id, request, It.IsAny<CancellationToken>()))
             .ReturnsAsync(Result.Success<CategoriaDto, DomainErrors>(categoria));
 
         // Act
@@ -106,7 +106,7 @@ public class CategoriaControllerCasosCorrectosTest : CategoriaControllerTestBase
         const string Id = "abcdefghijk";
 
         Service
-            .Setup(s => s.DeleteAsync(Id, It.IsAny<CancellationToken>()))
+            .Setup(s => s.DeleteCategoriaAsync(Id, It.IsAny<CancellationToken>()))
             .ReturnsAsync(Result.Success<bool, DomainErrors>(true));
 
         // Act

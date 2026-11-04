@@ -138,4 +138,17 @@ public class ProveedorRepositoryCasosIncorrectosTest : ProveedorRepositoryTestBa
         result.IsFailure.Should().BeTrue();
         result.Error.Should().BeOfType<ProveedorRepositoryErrors.ExistsByNameError>();
     }
+
+    [Test]
+    public async Task UpdateAsync_ProveedorInexistente_RetornaError() {
+        // Arrange
+        var proveedor = CreateProveedor();
+
+        // Act
+        var result = await Repository.UpdateAsync(proveedor);
+
+        // Assert
+        result.IsFailure.Should().BeTrue();
+        result.Error.Should().BeOfType<ProveedorRepositoryErrors.UpdatedError>();
+    }
 }

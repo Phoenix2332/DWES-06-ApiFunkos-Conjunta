@@ -3,8 +3,8 @@ using ApiFunkosConjunta.Errors;
 using CSharpFunctionalExtensions;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
-using Moq;
 using MongoDB.Bson;
+using Moq;
 
 namespace ApiFunkosConjunta.Tests.Controllers.Proveedores;
 
@@ -23,7 +23,8 @@ public class ProveedorControllerCasosIncorrectosTest : ProveedorControllerTestBa
         resultado.Should().BeOfType<BadRequestObjectResult>();
 
         Service.Verify(
-            s => s.GetAllAsync(It.IsAny<string?>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<CancellationToken>()),
+            s => s.GetAllProveedoresAsync(It.IsAny<string?>(), It.IsAny<int>(), It.IsAny<int>(),
+                It.IsAny<CancellationToken>()),
             Times.Never);
     }
 
@@ -31,7 +32,7 @@ public class ProveedorControllerCasosIncorrectosTest : ProveedorControllerTestBa
     public async Task GetAll_ErrorServicio_RetornaInternalServerError() {
         // Arrange
         Service
-            .Setup(s => s.GetAllAsync(null, 1, 10, It.IsAny<CancellationToken>()))
+            .Setup(s => s.GetAllProveedoresAsync(null, 1, 10, It.IsAny<CancellationToken>()))
             .ReturnsAsync(
                 Result.Failure<(IReadOnlyList<ProveedorDto> Proveedores, int Total), DomainErrors>(
                     ProveedorServiceError.GetAllError()));
@@ -57,7 +58,7 @@ public class ProveedorControllerCasosIncorrectosTest : ProveedorControllerTestBa
         // Assert
         resultado.Should().BeOfType<BadRequestObjectResult>();
 
-        Service.Verify(s => s.GetByIdAsync(It.IsAny<ObjectId>(), It.IsAny<CancellationToken>()), Times.Never);
+        Service.Verify(s => s.GetProveedorByIdAsync(It.IsAny<ObjectId>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 
     [Test]
@@ -66,7 +67,7 @@ public class ProveedorControllerCasosIncorrectosTest : ProveedorControllerTestBa
         var proveedor = CreateProveedor();
 
         Service
-            .Setup(s => s.GetByIdAsync(proveedor.Id, It.IsAny<CancellationToken>()))
+            .Setup(s => s.GetProveedorByIdAsync(proveedor.Id, It.IsAny<CancellationToken>()))
             .ReturnsAsync(Result.Failure<ProveedorDto, DomainErrors>(
                 ProveedorServiceError.NotFoundError(proveedor.Id.ToString())));
 
@@ -83,7 +84,7 @@ public class ProveedorControllerCasosIncorrectosTest : ProveedorControllerTestBa
         var proveedor = CreateProveedor();
 
         Service
-            .Setup(s => s.GetByIdAsync(proveedor.Id, It.IsAny<CancellationToken>()))
+            .Setup(s => s.GetProveedorByIdAsync(proveedor.Id, It.IsAny<CancellationToken>()))
             .ReturnsAsync(Result.Failure<ProveedorDto, DomainErrors>(
                 ProveedorServiceError.GetByIdError(proveedor.Id.ToString())));
 
@@ -103,7 +104,7 @@ public class ProveedorControllerCasosIncorrectosTest : ProveedorControllerTestBa
         var request = CreateCreateRequest();
 
         Service
-            .Setup(s => s.CreateAsync(request, It.IsAny<CancellationToken>()))
+            .Setup(s => s.CreateProveedorAsync(request, It.IsAny<CancellationToken>()))
             .ReturnsAsync(Result.Failure<ProveedorDto, DomainErrors>(
                 ProveedorServiceError.DuplicateNameError(request.Nombre)));
 
@@ -120,7 +121,7 @@ public class ProveedorControllerCasosIncorrectosTest : ProveedorControllerTestBa
         var request = CreateCreateRequest();
 
         Service
-            .Setup(s => s.CreateAsync(request, It.IsAny<CancellationToken>()))
+            .Setup(s => s.CreateProveedorAsync(request, It.IsAny<CancellationToken>()))
             .ReturnsAsync(Result.Failure<ProveedorDto, DomainErrors>(ProveedorServiceError.CreateError()));
 
         // Act
@@ -145,7 +146,7 @@ public class ProveedorControllerCasosIncorrectosTest : ProveedorControllerTestBa
         // Assert
         resultado.Should().BeOfType<BadRequestObjectResult>();
 
-        Service.Verify(s => s.UpdateAsync(It.IsAny<ObjectId>(), It.IsAny<ActualizarProveedorDto>(),
+        Service.Verify(s => s.UpdateProveedorAsync(It.IsAny<ObjectId>(), It.IsAny<ActualizarProveedorDto>(),
             It.IsAny<CancellationToken>()), Times.Never);
     }
 
@@ -156,7 +157,7 @@ public class ProveedorControllerCasosIncorrectosTest : ProveedorControllerTestBa
         var request = CreateUpdateRequest();
 
         Service
-            .Setup(s => s.UpdateAsync(proveedor.Id, request, It.IsAny<CancellationToken>()))
+            .Setup(s => s.UpdateProveedorAsync(proveedor.Id, request, It.IsAny<CancellationToken>()))
             .ReturnsAsync(Result.Failure<ProveedorDto, DomainErrors>(
                 ProveedorServiceError.NotFoundError(proveedor.Id.ToString())));
 
@@ -174,7 +175,7 @@ public class ProveedorControllerCasosIncorrectosTest : ProveedorControllerTestBa
         var request = CreateUpdateRequest();
 
         Service
-            .Setup(s => s.UpdateAsync(proveedor.Id, request, It.IsAny<CancellationToken>()))
+            .Setup(s => s.UpdateProveedorAsync(proveedor.Id, request, It.IsAny<CancellationToken>()))
             .ReturnsAsync(Result.Failure<ProveedorDto, DomainErrors>(
                 ProveedorServiceError.DuplicateNameError(request.Nombre)));
 
@@ -192,7 +193,7 @@ public class ProveedorControllerCasosIncorrectosTest : ProveedorControllerTestBa
         var request = CreateUpdateRequest();
 
         Service
-            .Setup(s => s.UpdateAsync(proveedor.Id, request, It.IsAny<CancellationToken>()))
+            .Setup(s => s.UpdateProveedorAsync(proveedor.Id, request, It.IsAny<CancellationToken>()))
             .ReturnsAsync(Result.Failure<ProveedorDto, DomainErrors>(
                 ProveedorServiceError.UpdateError(proveedor.Id.ToString())));
 
@@ -217,7 +218,7 @@ public class ProveedorControllerCasosIncorrectosTest : ProveedorControllerTestBa
         // Assert
         resultado.Should().BeOfType<BadRequestObjectResult>();
 
-        Service.Verify(s => s.DeleteAsync(It.IsAny<ObjectId>(), It.IsAny<CancellationToken>()), Times.Never);
+        Service.Verify(s => s.DeleteProveedorAsync(It.IsAny<ObjectId>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 
     [Test]
@@ -226,7 +227,7 @@ public class ProveedorControllerCasosIncorrectosTest : ProveedorControllerTestBa
         var proveedor = CreateProveedor();
 
         Service
-            .Setup(s => s.DeleteAsync(proveedor.Id, It.IsAny<CancellationToken>()))
+            .Setup(s => s.DeleteProveedorAsync(proveedor.Id, It.IsAny<CancellationToken>()))
             .ReturnsAsync(Result.Failure<bool, DomainErrors>(
                 ProveedorServiceError.NotFoundError(proveedor.Id.ToString())));
 
@@ -243,7 +244,7 @@ public class ProveedorControllerCasosIncorrectosTest : ProveedorControllerTestBa
         var proveedor = CreateProveedor();
 
         Service
-            .Setup(s => s.DeleteAsync(proveedor.Id, It.IsAny<CancellationToken>()))
+            .Setup(s => s.DeleteProveedorAsync(proveedor.Id, It.IsAny<CancellationToken>()))
             .ReturnsAsync(Result.Failure<bool, DomainErrors>(
                 ProveedorServiceError.DeleteError(proveedor.Id.ToString())));
 
@@ -270,7 +271,29 @@ public class ProveedorControllerCasosIncorrectosTest : ProveedorControllerTestBa
         resultado.Should().BeOfType<BadRequestObjectResult>();
 
         Service.Verify(
-            s => s.GetAllAsync(It.IsAny<string?>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<CancellationToken>()),
+            s => s.GetAllProveedoresAsync(It.IsAny<string?>(), It.IsAny<int>(), It.IsAny<int>(),
+                It.IsAny<CancellationToken>()),
             Times.Never);
+    }
+
+    [Test]
+    public async Task Delete_ProveedorConFunkosAsociados_RetornaConflict() {
+        // Arrange
+        var proveedor = CreateProveedor();
+
+        Service
+            .Setup(s => s.DeleteProveedorAsync(proveedor.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(
+                Result.Failure<bool, DomainErrors>(
+                    CatalogoServiceError.ProveedorConFunkosError(proveedor.Id.ToString())));
+
+        // Act
+        var resultado = await Controller.Delete(proveedor.Id.ToString(), CancellationToken.None);
+
+        // Assert
+        resultado.Should().BeOfType<ConflictObjectResult>();
+
+        var conflictResult = (ConflictObjectResult)resultado;
+        conflictResult.StatusCode.Should().Be(409);
     }
 }
