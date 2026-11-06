@@ -1,5 +1,7 @@
 <Solution>
   <Folder Name="/Solution Items/">
+    <File Path="compose.local.yaml" />
+    <File Path="compose.prod.yaml" />
     <File Path="compose.yaml" />
   </Folder>
   <Project Path="ApiFunkosConjunta.Tests/ApiFunkosConjunta.Tests.csproj" />

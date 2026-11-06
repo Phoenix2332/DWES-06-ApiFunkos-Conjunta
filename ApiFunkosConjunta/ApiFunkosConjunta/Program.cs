@@ -13,11 +13,11 @@ builder.Services.AddApplicationServices(builder.Configuration);
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment()) await CategoriaSeeder.SeedAsync(app.Services);
+await CategoriaSeeder.SeedAsync(app.Services);
 
-if (app.Environment.IsDevelopment()) await ProveedorSeeder.SeedAsync(app.Services);
+await ProveedorSeeder.SeedAsync(app.Services);
 
-if (app.Environment.IsDevelopment()) await FunkoSeeder.SeedAsync(app.Services);
+await FunkoSeeder.SeedAsync(app.Services);
 
 if (app.Environment.IsDevelopment()) app.MapOpenApi();
 
