@@ -44,3 +44,8 @@ BenchmarkDotNet.Artifacts/
 /coverage
 /coverage-report
 /coverage-results
+
+# Variables de entorno y credenciales
+.env
+.env.*
+!.env.example
