@@ -1,5 +1,6 @@
 using ApiFunkosConjunta.Errors;
 using ApiFunkosConjunta.Models;
+using ApiFunkosConjunta.Services.Email;
 using CSharpFunctionalExtensions;
 using FluentAssertions;
 using Moq;
@@ -109,6 +110,31 @@ public class FunkoServiceCasosCorrectosTest : FunkoServiceTestBase {
         Repository.Verify(r => r.AddAsync(
                 It.Is<Funko>(f => f.Nombre == "Funko de prueba"),
                 It.IsAny<CancellationToken>()),
+            Times.Once);
+    }
+
+    [Test]
+    public async Task CreateAsync_DatosValidos_EncolaElAvisoAlAdmin() {
+        // Arrange
+        var request = CreateRequest();
+        var funko = CreateFunko();
+
+        Repository
+            .Setup(r => r.AddAsync(It.IsAny<Funko>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Result.Success<Funko, DomainErrors>(funko));
+
+        // Act
+        var result = await Service.CreateAsync(request);
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+
+        EmailService.Verify(
+            e => e.EnqueueEmailAsync(It.Is<EmailMessage>(m =>
+                m.To == AdminEmail &&
+                m.Subject == "Nuevo funko: Funko de prueba" &&
+                m.IsHtml &&
+                m.Body.Contains("Funko de prueba"))),
             Times.Once);
     }
 

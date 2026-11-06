@@ -1,6 +1,37 @@
-@ApiFunkosConjunta_HostAddress = http://localhost:5087
+@host = http://localhost:5087
 
-GET {{ApiFunkosConjunta_HostAddress}}/weatherforecast/
-Accept: application/json
+### 1. Login (rol Administrador).
+### En Visual Studio Code (extension REST Client) y en Rider se encadena sola:
+### el token se guarda en la variable @token de la peticion 4.
+# @name login
+POST {{host}}/api/auth/login
+Content-Type: application/json
 
-###
+{
+  "username": "admin",
+  "password": "Admin123!"
+}
+
+### 2. Listar categorias: copia el id de "datos"[0] para la peticion 4.
+GET {{host}}/api/categorias?pagina=1&tamanoPagina=1
+
+### 3. Listar proveedores: copia el id de "datos"[0] para la peticion 4.
+GET {{host}}/api/proveedores?pagina=1&tamanoPagina=1
+
+### 4. Crear un funko. Es lo que dispara el aviso por email al administrador.
+### Tras enviarla, mira el buzon de MailDev: http://localhost:1080
+POST {{host}}/api/funkos
+Authorization: Bearer {{login.response.body.token}}
+Content-Type: application/json
+
+{
+  "nombre": "Funko Batman Test",
+  "categoriaId": "PEGA_AQUI_EL_ID_DE_LA_CATEGORIA",
+  "proveedorId": "PEGA_AQUI_EL_ID_DEL_PROVEEDOR",
+  "stock": 7,
+  "precio": 24.99,
+  "imagen": "imagenes/batman.png"
+}
+
+### 5. Listar los funkos creados.
+GET {{host}}/api/funkos?pagina=1&tamanoPagina=10

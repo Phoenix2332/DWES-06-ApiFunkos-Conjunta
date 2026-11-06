@@ -9,7 +9,7 @@ builder.Services.AddControllers()
         options.JsonSerializerOptions.Converters.Add(new ObjectIdJsonConverter()));
 builder.Services.AddOpenApi();
 
-builder.Services.AddApplicationServices(builder.Configuration);
+builder.Services.AddApplicationServices(builder.Configuration, builder.Environment);
 
 var app = builder.Build();
 

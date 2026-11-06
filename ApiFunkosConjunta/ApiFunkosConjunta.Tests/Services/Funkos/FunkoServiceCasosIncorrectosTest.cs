@@ -1,5 +1,6 @@
 using ApiFunkosConjunta.Errors;
 using ApiFunkosConjunta.Models;
+using ApiFunkosConjunta.Services.Email;
 using CSharpFunctionalExtensions;
 using FluentAssertions;
 using Moq;
@@ -118,6 +119,24 @@ public class FunkoServiceCasosIncorrectosTest : FunkoServiceTestBase {
         // Assert
         result.IsFailure.Should().BeTrue();
         result.Error.Should().BeOfType<RepositoryErrors.CreationError>();
+    }
+
+    [Test]
+    public async Task CreateAsync_ErrorAlCrear_NoEncolaElAvisoAlAdmin() {
+        // Arrange
+        var request = CreateRequest();
+
+        Repository
+            .Setup(r => r.AddAsync(It.IsAny<Funko>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Result.Failure<Funko, DomainErrors>(RepositoryError.CreationError()));
+
+        // Act
+        var result = await Service.CreateAsync(request);
+
+        // Assert
+        result.IsFailure.Should().BeTrue();
+
+        EmailService.Verify(e => e.EnqueueEmailAsync(It.IsAny<EmailMessage>()), Times.Never);
     }
 
     [Test]

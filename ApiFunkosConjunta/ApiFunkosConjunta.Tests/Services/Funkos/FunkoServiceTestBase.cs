@@ -1,19 +1,32 @@
+using ApiFunkosConjunta.Common.Configuration;
 using ApiFunkosConjunta.Dto.Funkos;
 using ApiFunkosConjunta.Models;
 using ApiFunkosConjunta.Repositories.Interfaces;
+using ApiFunkosConjunta.Services.Email;
 using ApiFunkosConjunta.Services.Implementations;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Moq;
 
 namespace ApiFunkosConjunta.Tests.Services.Funkos;
 
 public abstract class FunkoServiceTestBase {
+    protected const string AdminEmail = "admin@apifunkos.com";
+
     protected Mock<IFunkoRepository> Repository = null!;
+    protected Mock<IEmailService> EmailService = null!;
+    protected Mock<ILogger<FunkoService>> Logger = null!;
     protected FunkoService Service = null!;
 
     [SetUp]
     public void SetUp() {
         Repository = new Mock<IFunkoRepository>();
-        Service = new FunkoService(Repository.Object);
+        EmailService = new Mock<IEmailService>();
+        Logger = new Mock<ILogger<FunkoService>>();
+
+        var smtpSettings = Options.Create(new SmtpSettings { AdminEmail = AdminEmail });
+
+        Service = new FunkoService(Repository.Object, EmailService.Object, smtpSettings, Logger.Object);
     }
 
     protected static Funko CreateFunko(int id = 1) {
