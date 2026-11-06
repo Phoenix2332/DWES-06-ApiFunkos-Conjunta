@@ -21,7 +21,10 @@ public class CrearFunkoDto {
     [Range(0, int.MaxValue, ErrorMessage = "El stock no puede ser negativo.")]
     public int Stock { get; set; }
 
-    [Range(typeof(decimal), "0.01", "99999999.99", ErrorMessage = "El precio debe ser mayor que 0.")]
+    // Ojo: con la forma [Range(typeof(decimal), "0.01", "...")] el atributo parsea los limites con la
+    // cultura actual y falla con cultures que usan la coma decimal (p. ej. es-ES): FormatException.
+    // La forma con double convierte los limites a decimal sin depender de la cultura.
+    [Range(0.01, 99999999.99, ErrorMessage = "El precio debe ser mayor que 0.")]
     public decimal Precio { get; set; }
 
     [Required(ErrorMessage = "La imagen es obligatoria.")]

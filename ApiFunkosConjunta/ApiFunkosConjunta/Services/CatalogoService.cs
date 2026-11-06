@@ -1,4 +1,5 @@
 using System.Text.Json;
+using ApiFunkosConjunta.Common.Json;
 using ApiFunkosConjunta.Dto.Categorias;
 using ApiFunkosConjunta.Dto.Funkos;
 using ApiFunkosConjunta.Dto.Proveedores;
@@ -19,6 +20,12 @@ public class CatalogoService(
     private const string _categoriasCacheVersionKey = "categorias:version";
     private const string _proveedoresCacheVersionKey = "proveedores:version";
 
+    // La cache se serializa con System.Text.Json, que no conoce el ObjectId de Mongo:
+    // sin este converter el Id del proveedor se pierde al cachearlo (queda vacio).
+    private static readonly JsonSerializerOptions _jsonOptions = new() {
+        Converters = { new ObjectIdJsonConverter() }
+    };
+
     // Categorias
     public async Task<Result<(IReadOnlyList<CategoriaDto> Categorias, int Total), DomainErrors>> GetAllCategoriasAsync(
         string? nombre, int pagina, int tamanoPagina, CancellationToken cancellationToken = default) {
@@ -29,7 +36,7 @@ public class CatalogoService(
         var cachedData = await cache.GetStringAsync(cacheKey, cancellationToken);
 
         if (cachedData is not null) {
-            var resultadoCache = JsonSerializer.Deserialize<CacheCategoriaDto>(cachedData);
+            var resultadoCache = JsonSerializer.Deserialize<CacheCategoriaDto>(cachedData, _jsonOptions);
 
             if (resultadoCache is not null)
                 return Result.Success<(IReadOnlyList<CategoriaDto> Categorias, int Total), DomainErrors>((
@@ -43,7 +50,7 @@ public class CatalogoService(
 
         var datosCache = new CacheCategoriaDto(resultado.Value.Categorias, resultado.Value.Total);
 
-        await cache.SetStringAsync(cacheKey, JsonSerializer.Serialize(datosCache),
+        await cache.SetStringAsync(cacheKey, JsonSerializer.Serialize(datosCache, _jsonOptions),
             new DistributedCacheEntryOptions {
                 AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5)
             },
@@ -128,7 +135,7 @@ public class CatalogoService(
         var cachedData = await cache.GetStringAsync(cacheKey, cancellationToken);
 
         if (cachedData is not null) {
-            var resultadoCache = JsonSerializer.Deserialize<CacheProveedorDto>(cachedData);
+            var resultadoCache = JsonSerializer.Deserialize<CacheProveedorDto>(cachedData, _jsonOptions);
 
             if (resultadoCache is not null)
                 return Result.Success<(IReadOnlyList<ProveedorDto> Proveedores, int Total), DomainErrors>((
@@ -142,7 +149,7 @@ public class CatalogoService(
 
         var datosCache = new CacheProveedorDto(resultado.Value.Proveedores, resultado.Value.Total);
 
-        await cache.SetStringAsync(cacheKey, JsonSerializer.Serialize(datosCache),
+        await cache.SetStringAsync(cacheKey, JsonSerializer.Serialize(datosCache, _jsonOptions),
             new DistributedCacheEntryOptions {
                 AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5)
             },
@@ -226,7 +233,7 @@ public class CatalogoService(
         var cachedData = await cache.GetStringAsync(cacheKey, cancellationToken);
 
         if (cachedData is not null) {
-            var resultadoCache = JsonSerializer.Deserialize<CacheFunkoDto>(cachedData);
+            var resultadoCache = JsonSerializer.Deserialize<CacheFunkoDto>(cachedData, _jsonOptions);
 
             if (resultadoCache is not null)
                 return Result.Success<(IReadOnlyList<FunkoDto> Funkos, int Total), DomainErrors>((resultadoCache.Funkos,
@@ -240,7 +247,7 @@ public class CatalogoService(
 
         var datosCache = new CacheFunkoDto(resultado.Value.Funkos, resultado.Value.Total);
 
-        await cache.SetStringAsync(cacheKey, JsonSerializer.Serialize(datosCache),
+        await cache.SetStringAsync(cacheKey, JsonSerializer.Serialize(datosCache, _jsonOptions),
             new DistributedCacheEntryOptions {
                 AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5)
             },

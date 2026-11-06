@@ -1,4 +1,5 @@
 using System.Text;
+using ApiFunkosConjunta.Common.Configuration;
 using ApiFunkosConjunta.Infrastructure.Persistence;
 using ApiFunkosConjunta.Repositories.Implementations;
 using ApiFunkosConjunta.Repositories.Interfaces;
@@ -12,8 +13,13 @@ namespace ApiFunkosConjunta.Infrastructure;
 
 public static class DependencyInjection {
     public static IServiceCollection AddApplicationServices(this IServiceCollection services,
-        IConfiguration configuration) {
+        IConfiguration configuration, IWebHostEnvironment environment) {
         services.AddPersistence(configuration);
+
+        services.AddEmail(environment);
+
+        // Configuracion SMTP tipada (patron IOptions del tema 21): seccion "Smtp".
+        services.Configure<SmtpSettings>(configuration.GetSection("Smtp"));
 
         var jwtKey = configuration["Jwt:Key"]
                      ?? throw new InvalidOperationException("No se ha configurado la clave JWT.");

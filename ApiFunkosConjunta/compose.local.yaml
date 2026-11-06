@@ -30,6 +30,15 @@
     volumes:
       - redis_data:/data
 
+  # Servidor SMTP local para probar el envio de correos sin salir a internet.
+  # Buzon web en http://localhost:1080   (TiendaDawApi y UD02, apartado 21)
+  maildev:
+    image: maildev/maildev
+    restart: unless-stopped
+    ports:
+      - "1080:1080"   # Interfaz web
+      - "1025:1025"   # SMTP
+
 volumes:
   postgres_data:
   mongodb_data:

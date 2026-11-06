@@ -18,6 +18,33 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
+    },
+    "produccion-local": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": false,
+      "applicationUrl": "http://localhost:5087",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Production",
+        "Logging__LogLevel__Default": "Information",
+        "ConnectionStrings__PostgreSQL": "Host=localhost;Port=5432;Database=ApiFunkos;Username=postgres;Password=postgres",
+        "ConnectionStrings__Redis": "localhost:6379",
+        "MongoDB__ConnectionString": "mongodb://admin:admin@localhost:27017/?authSource=admin",
+        "MongoDB__DatabaseName": "ApiFunkos",
+        "Jwt__Key": "ApiFunkosConjunta_Clave_Segura_2026_Cambiar_En_Produccion",
+        "Jwt__Issuer": "ApiFunkosConjunta",
+        "Jwt__Audience": "ApiFunkosConjunta",
+        "Jwt__AdminUsername": "admin",
+        "Jwt__AdminPassword": "Admin123!",
+        "Smtp__Host": "localhost",
+        "Smtp__Port": "1025",
+        "Smtp__Username": "",
+        "Smtp__Password": "",
+        "Smtp__FromEmail": "noreply@apifunkos.com",
+        "Smtp__FromName": "ApiFunkos",
+        "Smtp__AdminEmail": "admin@apifunkos.com",
+        "Smtp__Security": "None"
+      }
     }
   }
 }
