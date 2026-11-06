@@ -49,3 +49,4 @@ BenchmarkDotNet.Artifacts/
 .env
 .env.*
 !.env.example
+!.env.prod.example
