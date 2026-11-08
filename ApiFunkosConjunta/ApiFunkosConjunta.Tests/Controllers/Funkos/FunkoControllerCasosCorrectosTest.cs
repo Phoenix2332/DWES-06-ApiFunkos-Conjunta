@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using ApiFunkosConjunta.Common.Pagination;
 using ApiFunkosConjunta.Dto.Funkos;
 using ApiFunkosConjunta.Errors;
@@ -29,7 +30,7 @@ public class FunkoControllerCasosCorrectosTest : FunkoControllerTestBase {
         var okResult = (OkObjectResult)resultado;
         okResult.Value.Should().BeOfType<PagedResult<FunkoDto>>();
 
-        var pagedResult = (PagedResult<FunkoDto>)okResult.Value!;
+        var pagedResult = (PagedResult<FunkoDto>)okResult.Value;
 
         pagedResult.Datos.Should().HaveCount(1);
         pagedResult.Total.Should().Be(1);
@@ -59,11 +60,22 @@ public class FunkoControllerCasosCorrectosTest : FunkoControllerTestBase {
     [Test]
     public async Task Create_DatosValidos_RetornaCreated() {
         // Arrange
+        Controller.ControllerContext = new ControllerContext {
+            HttpContext = new DefaultHttpContext {
+                User = new ClaimsPrincipal(
+                    new ClaimsIdentity(
+                        [
+                            new Claim(ClaimTypes.NameIdentifier, UsuarioId.ToString())
+                        ],
+                        "TestAuthentication"))
+            }
+        };
+
         var request = CreateCreateRequest();
         var funko = CreateFunko();
 
         Service
-            .Setup(s => s.CreateFunkoAsync(request, It.IsAny<CancellationToken>()))
+            .Setup(s => s.CreateFunkoAsync(request, UsuarioId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(Result.Success<FunkoDto, DomainErrors>(funko));
 
         // Act

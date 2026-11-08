@@ -6,6 +6,7 @@ using Moq;
 namespace ApiFunkosConjunta.Tests.Controllers.Funkos;
 
 public abstract class FunkoControllerTestBase {
+    protected const int UsuarioId = 1;
     protected FunkosController Controller = null!;
     protected Mock<ICatalogoService> Service = null!;
 

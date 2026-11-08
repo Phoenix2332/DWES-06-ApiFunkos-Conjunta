@@ -86,6 +86,7 @@ public class FunkoServiceCasosCorrectosTest : FunkoServiceTestBase {
     [Test]
     public async Task CreateAsync_DatosValidos_CreaYRetornaFunko() {
         // Arrange
+
         var request = CreateRequest();
         var funko = CreateFunko();
 
@@ -94,12 +95,13 @@ public class FunkoServiceCasosCorrectosTest : FunkoServiceTestBase {
                 It.Is<Funko>(f =>
                     f.Nombre == "Funko de prueba" &&
                     f.CategoriaId == "abcdefghijk" &&
-                    f.ProveedorId == "64b000000000000000000001"),
+                    f.ProveedorId == "64b000000000000000000001" &&
+                    f.UsuarioId == UsuarioId),
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(Result.Success<Funko, DomainErrors>(funko));
 
         // Act
-        var result = await Service.CreateAsync(request);
+        var result = await Service.CreateAsync(request, UsuarioId);
 
         // Assert
         result.IsSuccess.Should().BeTrue();
@@ -116,6 +118,7 @@ public class FunkoServiceCasosCorrectosTest : FunkoServiceTestBase {
     [Test]
     public async Task CreateAsync_DatosValidos_EncolaElAvisoAlAdmin() {
         // Arrange
+
         var request = CreateRequest();
         var funko = CreateFunko();
 
@@ -124,7 +127,7 @@ public class FunkoServiceCasosCorrectosTest : FunkoServiceTestBase {
             .ReturnsAsync(Result.Success<Funko, DomainErrors>(funko));
 
         // Act
-        var result = await Service.CreateAsync(request);
+        var result = await Service.CreateAsync(request, UsuarioId);
 
         // Assert
         result.IsSuccess.Should().BeTrue();

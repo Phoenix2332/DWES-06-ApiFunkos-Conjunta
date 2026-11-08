@@ -22,8 +22,9 @@ public class FunkoRepositoryCasosIncorrectosTest : FunkoRepositoryTestBase {
     public async Task GetAllAsync_SinFunkosCoincidentes_RetornaListaVacia() {
         // Arrange
         var categoriaId = await CreateCategoriaAsync();
+        var usuarioId = await CreateUsuarioAsync();
 
-        await Context.Funkos.AddAsync(CreateFunko(categoriaId));
+        await Context.Funkos.AddAsync(CreateFunko(categoriaId, usuarioId));
         await Context.SaveChangesAsync();
 
         // Act
@@ -65,7 +66,10 @@ public class FunkoRepositoryCasosIncorrectosTest : FunkoRepositoryTestBase {
     public async Task AddAsync_ErrorEnRepositorio_RetornaError() {
         // Arrange
         var categoriaId = await CreateCategoriaAsync();
-        var funko = CreateFunko(categoriaId);
+        var usuarioId = await CreateUsuarioAsync();
+        var funko = CreateFunko(categoriaId, usuarioId);
+
+        await Context.DisposeAsync();
 
         await Context.DisposeAsync();
 
@@ -81,7 +85,10 @@ public class FunkoRepositoryCasosIncorrectosTest : FunkoRepositoryTestBase {
     public async Task UpdateAsync_ErrorEnRepositorio_RetornaError() {
         // Arrange
         var categoriaId = await CreateCategoriaAsync();
-        var funko = CreateFunko(categoriaId);
+        var usuarioId = await CreateUsuarioAsync();
+        var funko = CreateFunko(categoriaId, usuarioId);
+
+        await Context.DisposeAsync();
 
         await Context.DisposeAsync();
 
@@ -97,7 +104,10 @@ public class FunkoRepositoryCasosIncorrectosTest : FunkoRepositoryTestBase {
     public async Task DeleteAsync_ErrorEnRepositorio_RetornaError() {
         // Arrange
         var categoriaId = await CreateCategoriaAsync();
-        var funko = CreateFunko(categoriaId);
+        var usuarioId = await CreateUsuarioAsync();
+        var funko = CreateFunko(categoriaId, usuarioId);
+
+        await Context.DisposeAsync();
 
         await Context.DisposeAsync();
 

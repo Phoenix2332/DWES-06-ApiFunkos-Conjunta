@@ -49,6 +49,14 @@
     networks:
       - apifunkos-network
 
+  maildev:
+    image: maildev/maildev
+    restart: unless-stopped
+    ports:
+      - "1080:1080"
+    networks:
+      - apifunkos-network
+
   api:
     build:
       context: .
@@ -94,6 +102,8 @@
         condition: service_healthy
       redis:
         condition: service_healthy
+      maildev:
+        condition: service_started
 
     networks:
       - apifunkos-network

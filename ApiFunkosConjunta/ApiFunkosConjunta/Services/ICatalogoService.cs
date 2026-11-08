@@ -46,7 +46,7 @@ public interface ICatalogoService {
 
     Task<Result<FunkoDto, DomainErrors>> GetFunkoByIdAsync(int id, CancellationToken cancellationToken = default);
 
-    Task<Result<FunkoDto, DomainErrors>> CreateFunkoAsync(CrearFunkoDto dto,
+    Task<Result<FunkoDto, DomainErrors>> CreateFunkoAsync(CrearFunkoDto dto, int usuarioId,
         CancellationToken cancellationToken = default);
 
     Task<Result<FunkoDto, DomainErrors>> UpdateFunkoAsync(int id, ActualizarFunkoDto dto,

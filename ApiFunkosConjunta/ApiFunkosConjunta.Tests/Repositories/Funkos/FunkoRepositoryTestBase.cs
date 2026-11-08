@@ -58,11 +58,25 @@ public abstract class FunkoRepositoryTestBase {
         return categoria.Id;
     }
 
-    protected static Funko CreateFunko(string categoriaId, string nombre = "Funko de prueba") {
+    protected async Task<int> CreateUsuarioAsync() {
+        var usuario = new Usuario {
+            NombreUsuario = "usuario-test",
+            PasswordHash = "hash-test",
+            Rol = "Usuario"
+        };
+
+        await Context.Usuarios.AddAsync(usuario);
+        await Context.SaveChangesAsync();
+
+        return usuario.Id;
+    }
+
+    protected static Funko CreateFunko(string categoriaId, int usuarioId, string nombre = "Funko de prueba") {
         return new Funko {
             Nombre = nombre,
             CategoriaId = categoriaId,
             ProveedorId = "64b000000000000000000001",
+            UsuarioId = usuarioId,
             Stock = 10,
             Precio = 19.99m,
             Imagen = "imagenes/funko-prueba.png"

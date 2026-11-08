@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using ApiFunkosConjunta.Common.Pagination;
 using ApiFunkosConjunta.Dto.Funkos;
 using ApiFunkosConjunta.Errors;
@@ -44,7 +45,12 @@ public class FunkosController(ICatalogoService service) : ControllerBase {
     [HttpPost]
     [Authorize(Roles = "Administrador")]
     public async Task<IActionResult> Create([FromBody] CrearFunkoDto dto, CancellationToken cancellationToken) {
-        var result = await service.CreateFunkoAsync(dto, cancellationToken);
+        var usuarioIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+        if (!int.TryParse(usuarioIdClaim, out var usuarioId))
+            return Unauthorized(new { message = "No se ha podido identificar al usuario autenticado." });
+
+        var result = await service.CreateFunkoAsync(dto, usuarioId, cancellationToken);
 
         if (result.IsFailure)
             return HandleError(result.Error);

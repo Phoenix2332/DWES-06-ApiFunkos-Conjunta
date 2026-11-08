@@ -1,7 +1,9 @@
+using System.Security.Claims;
 using ApiFunkosConjunta.Dto.Funkos;
 using ApiFunkosConjunta.Errors;
 using CSharpFunctionalExtensions;
 using FluentAssertions;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 
@@ -109,8 +111,19 @@ public class FunkoControllerCasosIncorrectosTest : FunkoControllerTestBase {
         // Arrange
         var request = CreateCreateRequest();
 
+        Controller.ControllerContext = new ControllerContext {
+            HttpContext = new DefaultHttpContext {
+                User = new ClaimsPrincipal(
+                    new ClaimsIdentity(
+                        [
+                            new Claim(ClaimTypes.NameIdentifier, UsuarioId.ToString())
+                        ],
+                        "TestAuthentication"))
+            }
+        };
+
         Service
-            .Setup(s => s.CreateFunkoAsync(request, It.IsAny<CancellationToken>()))
+            .Setup(s => s.CreateFunkoAsync(request, UsuarioId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(Result.Failure<FunkoDto, DomainErrors>(ServiceError.CreateError()));
 
         // Act

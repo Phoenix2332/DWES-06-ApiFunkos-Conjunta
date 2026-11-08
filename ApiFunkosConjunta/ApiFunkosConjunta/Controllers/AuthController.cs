@@ -8,8 +8,8 @@ namespace ApiFunkosConjunta.Controllers;
 [Route("api/[controller]")]
 public class AuthController(IAuthService authService) : ControllerBase {
     [HttpPost("login")]
-    public IActionResult Login([FromBody] LoginDto dto) {
-        var result = authService.Login(dto);
+    public async Task<IActionResult> Login([FromBody] LoginDto dto) {
+        var result = await authService.Login(dto);
 
         if (result.IsFailure)
             return Unauthorized(new { message = result.Error.Message });

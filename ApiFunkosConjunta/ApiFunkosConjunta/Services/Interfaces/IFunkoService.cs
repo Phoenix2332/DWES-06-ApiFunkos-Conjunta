@@ -10,7 +10,8 @@ public interface IFunkoService {
 
     Task<Result<FunkoDto, DomainErrors>> GetByIdAsync(int id, CancellationToken cancellationToken = default);
 
-    Task<Result<FunkoDto, DomainErrors>> CreateAsync(CrearFunkoDto dto, CancellationToken cancellationToken = default);
+    Task<Result<FunkoDto, DomainErrors>> CreateAsync(CrearFunkoDto dto, int usuarioId,
+        CancellationToken cancellationToken = default);
 
     Task<Result<FunkoDto, DomainErrors>> UpdateAsync(int id, ActualizarFunkoDto dto,
         CancellationToken cancellationToken = default);

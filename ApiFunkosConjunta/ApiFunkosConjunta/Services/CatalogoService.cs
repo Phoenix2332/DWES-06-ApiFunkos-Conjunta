@@ -283,7 +283,7 @@ public class CatalogoService(
         return resultado;
     }
 
-    public async Task<Result<FunkoDto, DomainErrors>> CreateFunkoAsync(CrearFunkoDto dto,
+    public async Task<Result<FunkoDto, DomainErrors>> CreateFunkoAsync(CrearFunkoDto dto, int usuarioId,
         CancellationToken cancellationToken = default) {
         var categoria = await categoriaService.GetByIdAsync(dto.CategoriaId, cancellationToken);
 
@@ -300,7 +300,7 @@ public class CatalogoService(
         if (proveedor.IsFailure)
             return Result.Failure<FunkoDto, DomainErrors>(proveedor.Error);
 
-        var resultado = await funkoService.CreateAsync(dto, cancellationToken);
+        var resultado = await funkoService.CreateAsync(dto, usuarioId, cancellationToken);
 
         if (resultado.IsSuccess)
             await InvalidarCacheFunkosAsync(cancellationToken: cancellationToken);

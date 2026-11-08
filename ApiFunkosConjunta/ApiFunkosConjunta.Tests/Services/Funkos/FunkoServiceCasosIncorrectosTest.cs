@@ -107,6 +107,7 @@ public class FunkoServiceCasosIncorrectosTest : FunkoServiceTestBase {
     [Test]
     public async Task CreateAsync_ErrorAlCrear_PropagaErrorRepositorio() {
         // Arrange
+
         var request = CreateRequest();
 
         Repository
@@ -114,7 +115,7 @@ public class FunkoServiceCasosIncorrectosTest : FunkoServiceTestBase {
             .ReturnsAsync(Result.Failure<Funko, DomainErrors>(RepositoryError.CreationError()));
 
         // Act
-        var result = await Service.CreateAsync(request);
+        var result = await Service.CreateAsync(request, UsuarioId);
 
         // Assert
         result.IsFailure.Should().BeTrue();
@@ -124,6 +125,7 @@ public class FunkoServiceCasosIncorrectosTest : FunkoServiceTestBase {
     [Test]
     public async Task CreateAsync_ErrorAlCrear_NoEncolaElAvisoAlAdmin() {
         // Arrange
+
         var request = CreateRequest();
 
         Repository
@@ -131,7 +133,7 @@ public class FunkoServiceCasosIncorrectosTest : FunkoServiceTestBase {
             .ReturnsAsync(Result.Failure<Funko, DomainErrors>(RepositoryError.CreationError()));
 
         // Act
-        var result = await Service.CreateAsync(request);
+        var result = await Service.CreateAsync(request, UsuarioId);
 
         // Assert
         result.IsFailure.Should().BeTrue();

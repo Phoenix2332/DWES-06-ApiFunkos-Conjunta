@@ -91,6 +91,8 @@ public class CatalogoServiceCasosIncorrectosTest : CatalogoServiceTestBase {
     [Test]
     public async Task CreateFunkoAsync_CategoriaInexistente_RetornaError() {
         // Arrange
+        const int UsuarioId = 1;
+
         var dto = new CrearFunkoDto {
             Nombre = "Spider-Man",
             CategoriaId = _categoriaId,
@@ -107,7 +109,7 @@ public class CatalogoServiceCasosIncorrectosTest : CatalogoServiceTestBase {
             .ReturnsAsync(Result.Failure<CategoriaDto, DomainErrors>(error));
 
         // Act
-        var resultado = await CatalogoService.CreateFunkoAsync(dto);
+        var resultado = await CatalogoService.CreateFunkoAsync(dto, UsuarioId);
 
         // Assert
         resultado.IsFailure.Should().BeTrue();
@@ -116,13 +118,15 @@ public class CatalogoServiceCasosIncorrectosTest : CatalogoServiceTestBase {
         ProveedorServiceMock.Verify(x => x.GetByIdAsync(It.IsAny<ObjectId>(), It.IsAny<CancellationToken>()),
             Times.Never);
 
-        FunkoServiceMock.Verify(x => x.CreateAsync(It.IsAny<CrearFunkoDto>(), It.IsAny<CancellationToken>()),
-            Times.Never);
+        FunkoServiceMock.Verify(
+            x => x.CreateAsync(It.IsAny<CrearFunkoDto>(), UsuarioId, It.IsAny<CancellationToken>()), Times.Never);
     }
 
     [Test]
     public async Task CreateFunkoAsync_ProveedorIdInvalido_RetornaError() {
         // Arrange
+        const int UsuarioId = 1;
+
         var dto = new CrearFunkoDto {
             Nombre = "Spider-Man",
             CategoriaId = _categoriaId,
@@ -142,7 +146,7 @@ public class CatalogoServiceCasosIncorrectosTest : CatalogoServiceTestBase {
             .ReturnsAsync(Result.Success<CategoriaDto, DomainErrors>(categoria));
 
         // Act
-        var resultado = await CatalogoService.CreateFunkoAsync(dto);
+        var resultado = await CatalogoService.CreateFunkoAsync(dto, UsuarioId);
 
         // Assert
         resultado.IsFailure.Should().BeTrue();
@@ -150,13 +154,15 @@ public class CatalogoServiceCasosIncorrectosTest : CatalogoServiceTestBase {
         ProveedorServiceMock.Verify(x => x.GetByIdAsync(It.IsAny<ObjectId>(), It.IsAny<CancellationToken>()),
             Times.Never);
 
-        FunkoServiceMock.Verify(x => x.CreateAsync(It.IsAny<CrearFunkoDto>(), It.IsAny<CancellationToken>()),
+        FunkoServiceMock.Verify(x => x.CreateAsync(It.IsAny<CrearFunkoDto>(), UsuarioId, It.IsAny<CancellationToken>()),
             Times.Never);
     }
 
     [Test]
     public async Task CreateFunkoAsync_ProveedorInexistente_RetornaError() {
         // Arrange
+        const int UsuarioId = 1;
+
         var dto = new CrearFunkoDto {
             Nombre = "Spider-Man",
             CategoriaId = _categoriaId,
@@ -182,13 +188,13 @@ public class CatalogoServiceCasosIncorrectosTest : CatalogoServiceTestBase {
             .ReturnsAsync(Result.Failure<ProveedorDto, DomainErrors>(error));
 
         // Act
-        var resultado = await CatalogoService.CreateFunkoAsync(dto);
+        var resultado = await CatalogoService.CreateFunkoAsync(dto, UsuarioId);
 
         // Assert
         resultado.IsFailure.Should().BeTrue();
         resultado.Error.Should().Be(error);
 
-        FunkoServiceMock.Verify(x => x.CreateAsync(It.IsAny<CrearFunkoDto>(), It.IsAny<CancellationToken>()),
+        FunkoServiceMock.Verify(x => x.CreateAsync(It.IsAny<CrearFunkoDto>(), UsuarioId, It.IsAny<CancellationToken>()),
             Times.Never);
     }
 
@@ -302,6 +308,8 @@ public class CatalogoServiceCasosIncorrectosTest : CatalogoServiceTestBase {
     [Test]
     public async Task CreateFunkoAsync_ErrorAlCrear_RetornaError() {
         // Arrange
+        const int UsuarioId = 1;
+
         var dto = new CrearFunkoDto {
             Nombre = "Spider-Man",
             CategoriaId = _categoriaId,
@@ -334,11 +342,11 @@ public class CatalogoServiceCasosIncorrectosTest : CatalogoServiceTestBase {
             .ReturnsAsync(Result.Success<ProveedorDto, DomainErrors>(proveedor));
 
         FunkoServiceMock
-            .Setup(x => x.CreateAsync(dto, It.IsAny<CancellationToken>()))
+            .Setup(x => x.CreateAsync(dto, UsuarioId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(Result.Failure<FunkoDto, DomainErrors>(error));
 
         // Act
-        var resultado = await CatalogoService.CreateFunkoAsync(dto);
+        var resultado = await CatalogoService.CreateFunkoAsync(dto, UsuarioId);
 
         // Assert
         resultado.IsFailure.Should().BeTrue();

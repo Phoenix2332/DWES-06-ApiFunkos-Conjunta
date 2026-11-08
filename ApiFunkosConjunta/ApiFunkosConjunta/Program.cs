@@ -1,5 +1,6 @@
 using ApiFunkosConjunta.Common.Json;
 using ApiFunkosConjunta.Data.Seed;
+using ApiFunkosConjunta.Hubs;
 using ApiFunkosConjunta.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,6 +16,8 @@ var app = builder.Build();
 
 await CategoriaSeeder.SeedAsync(app.Services);
 
+await UsuarioSeeder.SeedAsync(app.Services);
+
 await ProveedorSeeder.SeedAsync(app.Services);
 
 await FunkoSeeder.SeedAsync(app.Services);
@@ -27,5 +30,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapHub<FunkoHub>("/hubs/funkos");
 
 app.Run();

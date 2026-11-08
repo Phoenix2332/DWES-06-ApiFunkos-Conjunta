@@ -6,6 +6,7 @@ namespace ApiFunkosConjunta.Data;
 public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options) {
     public DbSet<Categoria> Categorias => Set<Categoria>();
     public DbSet<Funko> Funkos => Set<Funko>();
+    public DbSet<Usuario> Usuarios => Set<Usuario>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder) {
         base.OnModelCreating(modelBuilder);

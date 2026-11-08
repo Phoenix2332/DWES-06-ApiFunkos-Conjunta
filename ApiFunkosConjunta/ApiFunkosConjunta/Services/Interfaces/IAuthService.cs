@@ -5,5 +5,5 @@ using CSharpFunctionalExtensions;
 namespace ApiFunkosConjunta.Services.Interfaces;
 
 public interface IAuthService {
-    Result<LoginResponseDto, DomainErrors> Login(LoginDto dto);
+    Task<Result<LoginResponseDto, DomainErrors>> Login(LoginDto dto);
 }

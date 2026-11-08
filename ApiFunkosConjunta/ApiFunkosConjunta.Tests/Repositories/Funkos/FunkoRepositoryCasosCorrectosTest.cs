@@ -9,11 +9,12 @@ public class FunkoRepositoryCasosCorrectosTest : FunkoRepositoryTestBase {
     public async Task GetAllAsync_ConFunkos_RetornaFunkosPaginados() {
         // Arrange
         var categoriaId = await CreateCategoriaAsync();
+        var usuarioId = await CreateUsuarioAsync();
 
         var funkos = new[] {
-            CreateFunko(categoriaId, "Batman"),
-            CreateFunko(categoriaId, "Darth Vader"),
-            CreateFunko(categoriaId, "Spider-Man")
+            CreateFunko(categoriaId, usuarioId, "Batman"),
+            CreateFunko(categoriaId, usuarioId, "Darth Vader"),
+            CreateFunko(categoriaId, usuarioId, "Spider-Man")
         };
 
         await Context.Funkos.AddRangeAsync(funkos);
@@ -37,11 +38,12 @@ public class FunkoRepositoryCasosCorrectosTest : FunkoRepositoryTestBase {
     public async Task GetAllAsync_ConFiltro_RetornaFunkosCoincidentes() {
         // Arrange
         var categoriaId = await CreateCategoriaAsync();
+        var usuarioId = await CreateUsuarioAsync();
 
         var funkos = new[] {
-            CreateFunko(categoriaId, "Batman"),
-            CreateFunko(categoriaId, "Batman Beyond"),
-            CreateFunko(categoriaId, "Spider-Man")
+            CreateFunko(categoriaId, usuarioId, "Batman"),
+            CreateFunko(categoriaId, usuarioId, "Batman Beyond"),
+            CreateFunko(categoriaId, usuarioId, "Spider-Man")
         };
 
         await Context.Funkos.AddRangeAsync(funkos);
@@ -64,7 +66,8 @@ public class FunkoRepositoryCasosCorrectosTest : FunkoRepositoryTestBase {
     public async Task GetByIdAsync_FunkoExistente_RetornaFunko() {
         // Arrange
         var categoriaId = await CreateCategoriaAsync();
-        var funko = CreateFunko(categoriaId);
+        var usuarioId = await CreateUsuarioAsync();
+        var funko = CreateFunko(categoriaId, usuarioId);
 
         await Context.Funkos.AddAsync(funko);
         await Context.SaveChangesAsync();
@@ -83,7 +86,8 @@ public class FunkoRepositoryCasosCorrectosTest : FunkoRepositoryTestBase {
     public async Task AddAsync_FunkoValido_GuardaFunkoConIdGenerado() {
         // Arrange
         var categoriaId = await CreateCategoriaAsync();
-        var funko = CreateFunko(categoriaId);
+        var usuarioId = await CreateUsuarioAsync();
+        var funko = CreateFunko(categoriaId, usuarioId);
 
         // Act
         var result = await Repository.AddAsync(funko);
@@ -106,7 +110,8 @@ public class FunkoRepositoryCasosCorrectosTest : FunkoRepositoryTestBase {
     public async Task UpdateAsync_FunkoExistente_ActualizaFunko() {
         // Arrange
         var categoriaId = await CreateCategoriaAsync();
-        var funko = CreateFunko(categoriaId);
+        var usuarioId = await CreateUsuarioAsync();
+        var funko = CreateFunko(categoriaId, usuarioId);
 
         await Context.Funkos.AddAsync(funko);
         await Context.SaveChangesAsync();
@@ -135,7 +140,8 @@ public class FunkoRepositoryCasosCorrectosTest : FunkoRepositoryTestBase {
     public async Task DeleteAsync_FunkoExistente_EliminaFunko() {
         // Arrange
         var categoriaId = await CreateCategoriaAsync();
-        var funko = CreateFunko(categoriaId);
+        var usuarioId = await CreateUsuarioAsync();
+        var funko = CreateFunko(categoriaId, usuarioId);
 
         await Context.Funkos.AddAsync(funko);
         await Context.SaveChangesAsync();
@@ -158,7 +164,8 @@ public class FunkoRepositoryCasosCorrectosTest : FunkoRepositoryTestBase {
     public async Task ExistsByCategoriaIdAsync_ConFunkosAsociados_RetornaTrue() {
         // Arrange
         var categoriaId = await CreateCategoriaAsync();
-        var funko = CreateFunko(categoriaId);
+        var usuarioId = await CreateUsuarioAsync();
+        var funko = CreateFunko(categoriaId, usuarioId);
 
         await Context.Funkos.AddAsync(funko);
         await Context.SaveChangesAsync();
@@ -175,9 +182,10 @@ public class FunkoRepositoryCasosCorrectosTest : FunkoRepositoryTestBase {
     public async Task ExistsByProveedorIdAsync_ConFunkosAsociados_RetornaTrue() {
         // Arrange
         var categoriaId = await CreateCategoriaAsync();
+        var usuarioId = await CreateUsuarioAsync();
         const string ProveedorId = "64b000000000000000000001";
 
-        var funko = CreateFunko(categoriaId);
+        var funko = CreateFunko(categoriaId, usuarioId);
         funko.ProveedorId = ProveedorId;
 
         await Context.Funkos.AddAsync(funko);

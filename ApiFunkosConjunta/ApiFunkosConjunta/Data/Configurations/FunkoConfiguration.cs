@@ -40,5 +40,11 @@ public class FunkoConfiguration : IEntityTypeConfiguration<Funko> {
             .WithMany()
             .HasForeignKey(f => f.CategoriaId)
             .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasOne(f => f.Usuario)
+            .WithMany()
+            .HasForeignKey(f => f.UsuarioId)
+            .IsRequired()
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }
