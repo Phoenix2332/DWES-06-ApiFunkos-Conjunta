@@ -19,6 +19,11 @@ public static class DependencyInjection {
 
         services.AddEmail(environment);
 
+        // Documentacion Swagger/OpenAPI y politica de CORS (punto 24 del tema).
+        services.AddSwagger();
+
+        services.AddCorsPolicy(configuration, environment.IsDevelopment());
+
         // Configuracion SMTP tipada (patron IOptions del tema 21): seccion "Smtp".
         services.Configure<SmtpSettings>(configuration.GetSection("Smtp"));
 

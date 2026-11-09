@@ -5,6 +5,10 @@
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+        <!-- Punto 24 del tema: los comentarios XML se convierten en la documentacion de Swagger. -->
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <!-- 1591: "falta el comentario XML para el miembro" (no todos los miembros necesitan documentacion). -->
+        <NoWarn>$(NoWarn);1591</NoWarn>
     </PropertyGroup>
 
     <ItemGroup>
@@ -22,6 +26,10 @@
         <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="10.0.14"/>
         <PackageReference Include="MongoDB.Driver" Version="3.13.0"/>
         <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.3"/>
+        <!-- Punto 24 del tema: Swagger/OpenAPI (Swashbuckle). -->
+        <PackageReference Include="Swashbuckle.AspNetCore" Version="10.2.3"/>
+        <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="10.2.3"/>
+        <PackageReference Include="Swashbuckle.AspNetCore.Filters" Version="10.0.1"/>
     </ItemGroup>
 
     <ItemGroup>

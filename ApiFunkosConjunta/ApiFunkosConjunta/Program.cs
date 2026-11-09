@@ -13,6 +13,9 @@ builder.Services.AddControllers()
 
 builder.Services.AddOpenApi();
 
+// Respuestas de error estandarizadas en ProblemDetails (RFC 9457).
+builder.Services.AddProblemDetails();
+
 builder.Services.AddApplicationServices(builder.Configuration, builder.Environment);
 
 var app = builder.Build();
@@ -55,8 +58,26 @@ await FunkoSeeder.SeedAsync(app.Services);
 if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 
-if (app.Environment.IsDevelopment()) 
+if (app.Environment.IsDevelopment())
     app.UseHttpsRedirection();
+
+// En desarrollo el framework muestra la pagina de excepciones del desarrollador;
+// en produccion la respuesta del error es un ProblemDetails (RFC 9457).
+if (!app.Environment.IsDevelopment())
+    app.UseExceptionHandler();
+
+// Documentacion interactiva de la API (solo en desarrollo).
+if (app.Environment.IsDevelopment()) {
+    app.UseSwagger();
+
+    app.UseSwaggerUI(options => {
+        options.SwaggerEndpoint("/swagger/v1/swagger.json", "ApiFunkosConjunta API v1");
+        options.RoutePrefix = "swagger";
+    });
+}
+
+// Politica de CORS: permisiva en desarrollo y restrictiva en produccion.
+app.UseCorsPolicy(app.Environment.IsDevelopment());
 
 app.UseWebSockets();
 app.UseAuthentication();
