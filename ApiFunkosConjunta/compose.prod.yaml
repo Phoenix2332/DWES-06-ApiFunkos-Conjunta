@@ -91,6 +91,10 @@ services:
       Smtp__AdminEmail: ${SMTP_ADMIN_EMAIL}
       Smtp__Security: ${SMTP_SECURITY}
 
+      # CORS: solo se permiten los origenes configurados en produccion.
+      Cors__AllowedOrigins__0: ${CORS_ALLOWED_ORIGIN_0:-http://localhost:3000}
+      Cors__AllowedOrigins__1: ${CORS_ALLOWED_ORIGIN_1:-http://localhost:5173}
+
     volumes:
       - dataprotection_keys:/home/app/.aspnet/DataProtection-Keys
 

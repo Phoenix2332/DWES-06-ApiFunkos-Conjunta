@@ -4,6 +4,7 @@ using ApiFunkosConjunta.Errors;
 using ApiFunkosConjunta.Services.Interfaces;
 using CSharpFunctionalExtensions;
 using FluentAssertions;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 
@@ -70,14 +71,12 @@ public class AuthControllerTest {
 
         var unauthorizedResult = (UnauthorizedObjectResult)resultado;
 
-        unauthorizedResult.Value.Should().NotBeNull();
+        // El error se devuelve como ProblemDetails (RFC 9457).
+        var problemDetails = unauthorizedResult.Value.Should().BeOfType<ProblemDetails>().Subject;
 
-        var mensaje = unauthorizedResult.Value!
-            .GetType()
-            .GetProperty("message")!
-            .GetValue(unauthorizedResult.Value);
-
-        mensaje.Should().Be(error.Message);
+        problemDetails.Status.Should().Be(StatusCodes.Status401Unauthorized);
+        problemDetails.Title.Should().Be("No se ha podido autenticar la peticion.");
+        problemDetails.Detail.Should().Be(error.Message);
 
         _authService.Verify(s => s.Login(dto), Times.Once);
     }
