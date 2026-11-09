@@ -1,5 +1,6 @@
 using System.Text;
 using ApiFunkosConjunta.Common.Configuration;
+using ApiFunkosConjunta.GraphQL.Queries;
 using ApiFunkosConjunta.Infrastructure.Persistence;
 using ApiFunkosConjunta.Repositories.Implementations;
 using ApiFunkosConjunta.Repositories.Interfaces;
@@ -49,6 +50,10 @@ public static class DependencyInjection {
             });
 
         services.AddAuthorization();
+
+        services.AddGraphQLServer()
+            .AddAuthorization()
+            .AddQueryType<Query>();
 
         services.AddSignalR();
 
