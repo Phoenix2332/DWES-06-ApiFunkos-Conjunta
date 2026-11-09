@@ -101,6 +101,108 @@ public class MailKitEmailServiceTest {
     }
 
     [Test]
+    public async Task SendEmailAsync_SeguridadDesconocida_UsaLaConexionAutomatica() {
+        // Arrange
+        var settings = Options.Create(new SmtpSettings {
+            Host = "localhost",
+            Port = 1,
+            FromEmail = "noreply@apifunkos.com",
+            FromName = "ApiFunkos",
+            Security = "desconocida"
+        });
+
+        var service = new MailKitEmailService(
+            settings,
+            _logger.Object,
+            _emailChannel
+        );
+
+        var email = new EmailMessage {
+            To = "admin@apifunkos.com",
+            Subject = "Prueba seguridad",
+            Body = "Contenido",
+            IsHtml = false
+        };
+
+        // Act
+        var accion = async () => await service.SendEmailAsync(email);
+
+        // Assert
+        await accion.Should().ThrowAsync<Exception>();
+
+        _logger.Verify(
+            l => l.Log(
+                LogLevel.Error,
+                It.IsAny<EventId>(),
+                It.IsAny<It.IsAnyType>(),
+                It.IsAny<Exception?>(),
+                It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
+            Times.Once);
+    }
+
+    [Test]
+    public async Task SendEmailAsync_SeguridadTls_UsaLaConexionConStartTls() {
+        // Arrange
+        var settings = Options.Create(new SmtpSettings {
+            Host = "localhost",
+            Port = 1,
+            FromEmail = "noreply@apifunkos.com",
+            FromName = "ApiFunkos",
+            Security = "tls"
+        });
+
+        var service = new MailKitEmailService(
+            settings,
+            _logger.Object,
+            _emailChannel
+        );
+
+        var email = new EmailMessage {
+            To = "admin@apifunkos.com",
+            Subject = "Prueba tls",
+            Body = "Contenido",
+            IsHtml = false
+        };
+
+        // Act
+        var accion = async () => await service.SendEmailAsync(email);
+
+        // Assert
+        await accion.Should().ThrowAsync<Exception>();
+    }
+
+    [Test]
+    public async Task SendEmailAsync_SeguridadSsl_UsaLaConexionConSsl() {
+        // Arrange
+        var settings = Options.Create(new SmtpSettings {
+            Host = "localhost",
+            Port = 1,
+            FromEmail = "noreply@apifunkos.com",
+            FromName = "ApiFunkos",
+            Security = "ssl"
+        });
+
+        var service = new MailKitEmailService(
+            settings,
+            _logger.Object,
+            _emailChannel
+        );
+
+        var email = new EmailMessage {
+            To = "admin@apifunkos.com",
+            Subject = "Prueba ssl",
+            Body = "Contenido",
+            IsHtml = false
+        };
+
+        // Act
+        var accion = async () => await service.SendEmailAsync(email);
+
+        // Assert
+        await accion.Should().ThrowAsync<Exception>();
+    }
+
+    [Test]
     public async Task EnqueueEmailAsync_EmailValido_EncolaMensaje() {
         // Arrange
         var email = new EmailMessage {

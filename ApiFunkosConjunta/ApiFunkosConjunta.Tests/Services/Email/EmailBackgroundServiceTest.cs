@@ -67,6 +67,56 @@ public class EmailBackgroundServiceTest {
         MemoryEmailService.SentEmails[0].IsHtml.Should().BeTrue();
     }
 
+    [Test]
+    public async Task ExecuteAsync_ElEnvioFalla_RegistraElErrorYNoDetieneElWorker() {
+        // Arrange
+        var emailService = new Mock<IEmailService>();
+
+        emailService
+            .Setup(s => s.SendEmailAsync(It.IsAny<EmailMessage>()))
+            .ThrowsAsync(new InvalidOperationException("El servidor SMTP no esta disponible."));
+
+        var serviceProviderMock = new Mock<IServiceProvider>();
+        serviceProviderMock.Setup(p => p.GetService(typeof(IEmailService))).Returns(emailService.Object);
+
+        var scopeMock = new Mock<IServiceScope>();
+        scopeMock.Setup(s => s.ServiceProvider).Returns(serviceProviderMock.Object);
+
+        var scopeFactoryMock = new Mock<IServiceScopeFactory>();
+        scopeFactoryMock.Setup(f => f.CreateScope()).Returns(scopeMock.Object);
+
+        var logger = new Mock<ILogger<EmailBackgroundService>>();
+
+        var worker = new EmailBackgroundService(_channel, scopeFactoryMock.Object, logger.Object);
+
+        await worker.StartAsync(_cts.Token);
+
+        // Act
+        await _channel.Writer.WriteAsync(new EmailMessage {
+            To = "admin@apifunkos.com",
+            Subject = "Con error",
+            Body = "Contenido",
+            IsHtml = true
+        });
+
+        await EsperarA(() => emailService.Invocations.Count > 0);
+
+        // Assert
+        emailService.Verify(s => s.SendEmailAsync(It.IsAny<EmailMessage>()), Times.Once);
+
+        logger.Verify(
+            l => l.Log(
+                LogLevel.Error,
+                It.IsAny<EventId>(),
+                It.IsAny<It.IsAnyType>(),
+                It.IsAny<Exception?>(),
+                It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
+            Times.Once);
+
+        await worker.StopAsync(CancellationToken.None);
+        worker.Dispose();
+    }
+
     /// <summary>
     /// Espera activa con limite de tiempo: el worker procesa la cola en segundo plano.
     /// </summary>

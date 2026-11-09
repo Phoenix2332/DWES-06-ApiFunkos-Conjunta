@@ -59,8 +59,32 @@ public class ApiProblemTest {
     }
 
     [Test]
-    public void Validacion_ConstruyeElValidationProblemDetailsConLosErroresDeCampo() {
+    public void BadRequest_ConstruyeElProblemDetailsConElStatusYTipoDelRfc9457() {
         // Arrange
+        const string Detalle = "El id del proveedor no es válido.";
+
+        // Act
+        var problem = ApiProblem.BadRequest(Detalle);
+
+        // Assert
+        problem.Status.Should().Be(StatusCodes.Status400BadRequest);
+        problem.Type.Should().Be("https://tools.ietf.org/html/rfc9457#section-10.2");
+        problem.Detail.Should().Be(Detalle);
+    }
+
+    [Test]
+    public void Forbidden_ConstruyeElProblemDetailsConElStatusYTipoDelRfc9457() {
+        // Act
+        var problem = ApiProblem.Forbidden("El usuario no tiene el rol Administrador.");
+
+        // Assert
+        problem.Status.Should().Be(StatusCodes.Status403Forbidden);
+        problem.Type.Should().Be("https://tools.ietf.org/html/rfc9457#section-10.4");
+        problem.Title.Should().Be("No se tiene permiso para realizar esta operacion.");
+    }
+
+    [Test]
+    public void Validacion_ConstruyeElValidationProblemDetailsConLosErroresDeCampo() {        // Arrange
         var errores = new Dictionary<string, string[]> {
             ["paginacion"] = ["La pagina debe ser mayor o igual que 1."]
         };
