@@ -671,6 +671,9 @@ La estructura cubre las siguientes áreas:
 - **Repositories**: operaciones de acceso a PostgreSQL y MongoDB.
 - **Mappers**: conversiones entre modelos y DTO.
 - **Errors**: comprobaciones de los errores de dominio.
+- **Common**: `ProblemDetails` (RFC 9457), paginación, conversión de `ObjectId` y configuración SMTP.
+- **Infrastructure**: registro de Swagger/OpenAPI, políticas de CORS, persistencia, email e inyección de dependencias.
+- **Documentación**: ejemplos de petición de Swagger y filtro personalizado de operaciones.
 
 ### 14.1. Pruebas unitarias
 
@@ -678,7 +681,26 @@ Los mocks de Moq permiten aislar las dependencias y comprobar el comportamiento 
 
 También se comprueba la interacción con `IDistributedCache`, incluyendo la lectura de datos y la invalidación de las entradas al modificar el catálogo.
 
-### 14.2. Testcontainers
+### 14.2. Cobertura
+
+El proyecto tiene **327 pruebas** y una cobertura de líneas del **95,51 %** sobre el código de la API:
+
+```bash
+dotnet test --collect:"XPlat Code Coverage" --settings coverage.runsettings --results-directory TestResults
+```
+
+El informe se genera en formato Cobertura dentro de `TestResults`.
+
+| Zona | Cobertura |
+|---|---|
+| Controllers, Services, Repositories, Mappers y Errors | 100 % |
+| Common (ProblemDetails, paginación, `ObjectId`, SMTP) | 100 % |
+| Infrastructure (Swagger, CORS, persistencia, email, DI) | 92 % |
+| `Program.cs` (punto de entrada de la aplicación) | 0 % |
+
+`Program.cs` contiene las sentencias de nivel superior que arrancan la aplicación: se comprueba de forma indirecta al ejecutar la API (contenedores, seed y endpoints), no con pruebas unitarias.
+
+### 14.3. Testcontainers
 
 Las pruebas de repositorio utilizan contenedores reales:
 
@@ -689,7 +711,7 @@ Cada conjunto de pruebas prepara sus datos y utiliza los contenedores para compr
 
 Docker debe estar iniciado para ejecutar estas pruebas.
 
-### 14.3. Ejecutar los tests
+### 14.4. Ejecutar los tests
 
 Desde la carpeta raíz de la solución:
 

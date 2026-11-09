@@ -165,7 +165,9 @@ public class CatalogoService(
         var cachedData = await cache.GetStringAsync(cacheKey, cancellationToken);
 
         if (cachedData is not null) {
-            var resultadoCache = JsonSerializer.Deserialize<ProveedorDto>(cachedData);
+            // Se usa _jsonOptions porque el Id del proveedor es un ObjectId de MongoDB:
+            // sin su converter la deserializacion de la cache falla.
+            var resultadoCache = JsonSerializer.Deserialize<ProveedorDto>(cachedData, _jsonOptions);
 
             if (resultadoCache is not null)
                 return Result.Success<ProveedorDto, DomainErrors>(resultadoCache);
@@ -176,7 +178,7 @@ public class CatalogoService(
         if (resultado.IsFailure)
             return Result.Failure<ProveedorDto, DomainErrors>(resultado.Error);
 
-        await cache.SetStringAsync(cacheKey, JsonSerializer.Serialize(resultado.Value),
+        await cache.SetStringAsync(cacheKey, JsonSerializer.Serialize(resultado.Value, _jsonOptions),
             new DistributedCacheEntryOptions {
                 AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5)
             },
