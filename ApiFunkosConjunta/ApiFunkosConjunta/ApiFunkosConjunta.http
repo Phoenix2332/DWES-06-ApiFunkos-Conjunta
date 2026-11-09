@@ -1,5 +1,9 @@
 @host = http://localhost:5087
 
+### Documentacion interactiva de la API (solo en desarrollo):
+###   Swagger UI:      {{host}}/swagger
+###   Documento JSON:  {{host}}/swagger/v1/swagger.json
+
 ### 1. Login (rol Administrador).
 ### En Visual Studio Code (extension REST Client) y en Rider se encadena sola:
 ### el token se guarda en la variable @token de la peticion 4.

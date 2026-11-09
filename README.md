@@ -56,6 +56,7 @@ Los objetivos principales del proyecto son:
 | JWT Bearer | Autenticación mediante tokens JWT |
 | `CSharpFunctionalExtensions` | Resultados y gestión de errores |
 | `System.Text.Json` | Serialización de datos almacenados en caché |
+| Swashbuckle | Documentación interactiva de la API (Swagger/OpenAPI) |
 | NUnit 5 | Framework de pruebas |
 | Moq | Creación de mocks |
 | FluentAssertions | Aserciones de pruebas |
@@ -302,6 +303,50 @@ Ejemplo:
 ```http
 GET /api/funkos?nombre=batman&pagina=1&tamanoPagina=10
 ```
+
+### 7.5. Documentación interactiva (Swagger/OpenAPI)
+
+La API publica su documentación con **Swashbuckle**. En desarrollo está disponible la interfaz web de Swagger UI:
+
+```text
+http://localhost:5087/swagger
+```
+
+Y el documento OpenAPI en formato JSON:
+
+```text
+http://localhost:5087/swagger/v1/swagger.json
+```
+
+La configuración vive en `Infrastructure/SwaggerConfig.cs` y incluye:
+
+| Elemento | Para qué sirve |
+|---|---|
+| `SwaggerDoc("v1", ...)` | Título, versión, descripción y contacto de la API |
+| `AddSecurityDefinition("Bearer", ...)` | Esquema de seguridad JWT: habilita el botón **Authorize** de Swagger UI |
+| `IncludeXmlComments(...)` | Comentarios XML de los controladores y DTO como descripciones y ejemplos |
+| `EnableAnnotations()` | Atributos `[SwaggerOperation]`, `[SwaggerResponse]`, `[SwaggerParameter]`, `[SwaggerRequestBody]` y `[SwaggerSchema]` |
+| `ExampleFilters()` | Ejemplos de petición mediante `IExamplesProvider<T>` (`Common/Examples`) |
+| `OperationFilter<SwaggerExamplesFilter>()` | Filtro propio que añade ejemplos `ProblemDetails` a las respuestas de error |
+
+Para probar los endpoints protegidos desde Swagger UI:
+
+1. Abre <http://localhost:5087/swagger>.
+2. Pulsa **Authorize**, pega el token (sin la palabra `Bearer`) y confirma.
+3. Ejecuta `POST /api/Auth/login` para obtener el token si aún no lo tienes.
+
+Las respuestas de error se devuelven como `ProblemDetails` (RFC 9457), de modo que la documentación y la respuesta real usan el mismo formato.
+
+### 7.6. CORS
+
+La política de CORS se registra en `Infrastructure/CorsConfig.cs`:
+
+| Entorno | Política | Comportamiento |
+|---|---|---|
+| Desarrollo | `AllowAll` | Permite cualquier origen, método y cabecera |
+| Producción | `ProductionPolicy` | Solo los orígenes de la sección `Cors:AllowedOrigins` |
+
+En producción los orígenes se configuran en `appsettings.Production.json` o mediante las variables de entorno `Cors__AllowedOrigins__0`, `Cors__AllowedOrigins__1`, ...
 
 ---
 
@@ -599,6 +644,20 @@ Entre los casos contemplados se encuentran:
 
 Los controladores traducen los resultados a códigos HTTP, por ejemplo `400 Bad Request`, `401 Unauthorized`, `404 Not Found`, `409 Conflict` y `500 Internal Server Error`, según el caso.
 
+Las respuestas de error se construyen con `ProblemDetails` (RFC 9457) mediante las fábricas de `Common/Http/ApiProblem.cs`:
+
+```json
+{
+  "type": "https://tools.ietf.org/html/rfc9457#section-10.5",
+  "title": "No se ha encontrado el recurso solicitado.",
+  "status": 404,
+  "detail": "No se ha encontrado la categoría con el id: D2M_Lk6kKe6.",
+  "instance": "/api/categorias/D2M_Lk6kKe6"
+}
+```
+
+Los errores de validación del modelo devuelven un `ValidationProblemDetails`, que añade el diccionario `errors` con el detalle de cada campo.
+
 ---
 
 ## 14. Pruebas automatizadas
@@ -691,6 +750,8 @@ La configuración de servicios se centraliza en `Infrastructure/DependencyInject
 - `CatalogoService`.
 - `AuthService`.
 - La autenticación JWT y la autorización por roles.
+- La documentación Swagger/OpenAPI (`Infrastructure/SwaggerConfig.cs`).
+- La política de CORS (`Infrastructure/CorsConfig.cs`).
 
 `Infrastructure/Persistence/PersistenceExtensions.cs` registra:
 
