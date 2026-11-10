@@ -1,0 +1,27 @@
+meta {
+  name: Actualizar inexistente
+  type: http
+  seq: 7
+}
+
+put {
+  url: {{baseUrl}}/api/categorias/AAAAAAAAAAA
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "nombre": "Categoria inexistente"
+  }
+}
+
+script:post-response {
+  test("Devuelve 404 Not Found", function() {
+    expect(res.status).to.equal(404);
+  });
+}

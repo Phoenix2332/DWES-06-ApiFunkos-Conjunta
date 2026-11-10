@@ -1,0 +1,27 @@
+meta {
+  name: Datos invalidos
+  type: http
+  seq: 6
+}
+
+post {
+  url: {{baseUrl}}/api/categorias
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "nombre": "A"
+  }
+}
+
+script:post-response {
+  test("Devuelve 400 Bad Request", function() {
+    expect(res.status).to.equal(400);
+  });
+}

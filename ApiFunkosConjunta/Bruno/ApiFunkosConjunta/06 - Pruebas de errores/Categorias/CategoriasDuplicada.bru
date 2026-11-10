@@ -1,0 +1,27 @@
+meta {
+  name: Crear duplicada
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{baseUrl}}/api/categorias
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "nombre": "Videojuegos"
+  }
+}
+
+script:post-response {
+  test("Devuelve 409 Conflict", function() {
+    expect(res.status).to.equal(409);
+  });
+}

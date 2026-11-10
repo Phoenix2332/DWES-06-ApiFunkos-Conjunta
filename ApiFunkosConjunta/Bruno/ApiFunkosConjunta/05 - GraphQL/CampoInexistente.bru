@@ -1,0 +1,28 @@
+meta {
+  name: Campo inexistente
+  type: http
+  seq: 8
+}
+
+post {
+  url: {{baseUrl}}/graphql
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "query": "{ campoInventado }"
+  }
+}
+
+script:post-response {
+  test("Devuelve 400 Bad Request", function() {
+    expect(res.status).to.equal(400);
+  });
+
+  test("Contiene errores GraphQL", function() {
+    expect(res.body.errors).to.be.an("array");
+    expect(res.body.errors.length).to.be.greaterThan(0);
+  });
+}

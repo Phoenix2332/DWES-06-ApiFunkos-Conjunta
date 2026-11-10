@@ -1,0 +1,32 @@
+meta {
+  name: Funkos - Actualizar inexistente
+  type: http
+  seq: 5
+}
+
+put {
+  url: {{baseUrl}}/api/funkos/999999999
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "nombre": "Funko inexistente",
+    "categoriaId": "JtB5id61MXq",
+    "proveedorId": "64b000000000000000000001",
+    "stock": 10,
+    "precio": 19.99,
+    "imagen": "imagenes/funkos/inexistente.png"
+  }
+}
+
+script:post-response {
+  test("Devuelve 404 Not Found", function() {
+    expect(res.status).to.equal(404);
+  });
+}

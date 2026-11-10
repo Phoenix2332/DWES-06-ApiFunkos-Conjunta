@@ -1,0 +1,22 @@
+meta {
+  name: Listar categorias
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}/api/categorias
+  body: none
+  auth: none
+}
+
+params:query {
+  pagina: 1
+  tamanoPagina: 10
+}
+
+script:post-response {
+  test("Devuelve 200 OK", function() {
+    expect(res.status).to.equal(200);
+  });
+}

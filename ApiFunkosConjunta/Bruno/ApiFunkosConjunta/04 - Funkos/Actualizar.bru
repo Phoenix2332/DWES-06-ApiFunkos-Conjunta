@@ -1,0 +1,32 @@
+meta {
+  name: Actualizar funko
+  type: http
+  seq: 4
+}
+
+put {
+  url: {{baseUrl}}/api/funkos/{{funkoId}}
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "nombre": "Funko Bruno Actualizado",
+    "categoriaId": "XdkInZ9R09j",
+    "proveedorId": "64b000000000000000000001",
+    "stock": 25,
+    "precio": 24.99,
+    "imagen": "imagenes/funkos/bruno-actualizado.png"
+  }
+}
+
+script:post-response {
+  test("Devuelve 200 OK", function() {
+    expect(res.status).to.equal(200);
+  });
+}

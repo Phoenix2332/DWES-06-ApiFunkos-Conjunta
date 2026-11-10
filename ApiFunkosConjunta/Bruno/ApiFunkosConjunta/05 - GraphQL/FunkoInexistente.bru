@@ -1,0 +1,28 @@
+meta {
+  name: Funko inexistente
+  type: http
+  seq: 6
+}
+
+post {
+  url: {{baseUrl}}/graphql
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "query": "{ funko(id: 999999999) { id nombre } }"
+  }
+}
+
+script:post-response {
+  test("Devuelve 200 OK", function() {
+    expect(res.status).to.equal(200);
+  });
+
+  test("Contiene errores GraphQL", function() {
+    expect(res.body.errors).to.be.an("array");
+    expect(res.body.errors.length).to.be.greaterThan(0);
+  });
+}

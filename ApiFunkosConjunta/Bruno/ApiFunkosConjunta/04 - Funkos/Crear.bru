@@ -1,0 +1,36 @@
+meta {
+  name: Crear funko
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/api/funkos
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "nombre": "Funko Bruno",
+    "categoriaId": "XdkInZ9R09j",
+    "proveedorId": "64b000000000000000000001",
+    "stock": 15,
+    "precio": 19.99,
+    "imagen": "imagenes/funkos/bruno.png"
+  }
+}
+
+script:post-response {
+  test("Devuelve 201 Created", function() {
+    expect(res.status).to.equal(201);
+  });
+
+  if (res.status === 201) {
+    bru.setEnvVar("funkoId", res.body.id);
+  }
+}

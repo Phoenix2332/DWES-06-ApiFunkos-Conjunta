@@ -1,0 +1,24 @@
+meta {
+  name: Crear sin token
+  type: http
+  body: json
+  auth: none
+}
+
+post {
+  url: {{baseUrl}}/api/categorias
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "nombre": "Categoria Sin Token"
+  }
+}
+
+script:post-response {
+  test("Devuelve 401 Unauthorized", function() {
+    expect(res.status).to.equal(401);
+  });
+}

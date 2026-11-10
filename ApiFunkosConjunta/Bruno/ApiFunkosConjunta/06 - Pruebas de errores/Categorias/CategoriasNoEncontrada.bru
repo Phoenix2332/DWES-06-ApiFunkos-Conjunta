@@ -1,0 +1,17 @@
+meta {
+  name: Obtener inexistente
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{baseUrl}}/api/categorias/AAAAAAAAAAA
+  body: none
+  auth: none
+}
+
+script:post-response {
+  test("Devuelve 404 Not Found", function() {
+    expect(res.status).to.equal(404);
+  });
+}

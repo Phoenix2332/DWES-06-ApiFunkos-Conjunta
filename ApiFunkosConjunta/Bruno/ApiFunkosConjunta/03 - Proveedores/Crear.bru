@@ -1,0 +1,33 @@
+meta {
+  name: Crear proveedor
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/api/proveedores
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "nombre": "Proveedor Bruno",
+    "contacto": "bruno@proveedor.com",
+    "pais": "España"
+  }
+}
+
+script:post-response {
+  test("Devuelve 201 Created", function() {
+    expect(res.status).to.equal(201);
+  });
+
+  if (res.status === 201) {
+    bru.setEnvVar("proveedorId", res.body.id);
+  }
+}

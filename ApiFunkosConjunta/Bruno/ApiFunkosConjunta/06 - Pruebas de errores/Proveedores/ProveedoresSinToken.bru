@@ -1,0 +1,25 @@
+meta {
+  name: Proveedores - Crear sin token
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/api/proveedores
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "nombre": "Proveedor Sin Token",
+    "contacto": "sin-token@proveedor.com",
+    "pais": "España"
+  }
+}
+
+script:post-response {
+  test("Devuelve 401 Unauthorized", function() {
+    expect(res.status).to.equal(401);
+  });
+}

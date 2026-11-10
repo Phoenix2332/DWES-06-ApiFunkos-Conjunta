@@ -1,0 +1,27 @@
+meta {
+  name: Estado
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/graphql
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "query": "{ estado }"
+  }
+}
+
+script:post-response {
+  test("Devuelve 200 OK", function() {
+    expect(res.status).to.equal(200);
+  });
+
+  test("No contiene errores GraphQL", function() {
+    expect(res.body.errors).to.be.undefined;
+  });
+}

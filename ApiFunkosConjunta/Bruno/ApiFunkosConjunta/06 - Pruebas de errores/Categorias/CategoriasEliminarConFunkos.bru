@@ -1,0 +1,21 @@
+meta {
+  name: Eliminar con Funkos asociados
+  type: http
+  seq: 8
+}
+
+delete {
+  url: {{baseUrl}}/api/categorias/XdkInZ9R09j
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+script:post-response {
+  test("Devuelve 409 Conflict", function() {
+    expect(res.status).to.equal(409);
+  });
+}

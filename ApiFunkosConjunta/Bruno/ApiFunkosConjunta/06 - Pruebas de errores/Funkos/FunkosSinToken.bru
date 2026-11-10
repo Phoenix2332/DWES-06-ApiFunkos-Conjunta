@@ -1,0 +1,28 @@
+meta {
+  name: Funkos - Crear sin token
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/api/funkos
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "nombre": "Funko Sin Token",
+    "categoriaId": "JtB5id61MXq",
+    "proveedorId": "64b000000000000000000001",
+    "stock": 10,
+    "precio": 19.99,
+    "imagen": "imagenes/funkos/sin-token.png"
+  }
+}
+
+script:post-response {
+  test("Devuelve 401 Unauthorized", function() {
+    expect(res.status).to.equal(401);
+  });
+}

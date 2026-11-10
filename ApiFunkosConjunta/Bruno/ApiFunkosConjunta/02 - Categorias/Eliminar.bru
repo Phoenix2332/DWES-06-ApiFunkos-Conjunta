@@ -1,0 +1,21 @@
+meta {
+  name: Eliminar categoria
+  type: http
+  seq: 5
+}
+
+delete {
+  url: {{baseUrl}}/api/categorias/{{categoriaId}}
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+script:post-response {
+  test("Devuelve 204 No Content", function() {
+    expect(res.status).to.equal(204);
+  });
+}

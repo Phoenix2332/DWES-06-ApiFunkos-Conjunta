@@ -1,0 +1,21 @@
+meta {
+  name: Funkos - Eliminar inexistente
+  type: http
+  seq: 6
+}
+
+delete {
+  url: {{baseUrl}}/api/funkos/999999999
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+script:post-response {
+  test("Devuelve 404 Not Found", function() {
+    expect(res.status).to.equal(404);
+  });
+}

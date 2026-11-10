@@ -1,0 +1,32 @@
+meta {
+  name: Funkos - Datos invalidos
+  type: http
+  seq: 7
+}
+
+post {
+  url: {{baseUrl}}/api/funkos
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "nombre": "A",
+    "categoriaId": "JtB5id61MXq",
+    "proveedorId": "64b000000000000000000001",
+    "stock": -5,
+    "precio": -10,
+    "imagen": "imagenes/funkos/invalido.png"
+  }
+}
+
+script:post-response {
+  test("Devuelve 400 Bad Request", function() {
+    expect(res.status).to.equal(400);
+  });
+}

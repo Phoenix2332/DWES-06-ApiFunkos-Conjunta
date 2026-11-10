@@ -1,0 +1,29 @@
+meta {
+  name: Actualizar proveedor
+  type: http
+  seq: 4
+}
+
+put {
+  url: {{baseUrl}}/api/proveedores/{{proveedorId}}
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "nombre": "Proveedor Bruno Actualizado",
+    "contacto": "actualizado@proveedor.com",
+    "pais": "Portugal"
+  }
+}
+
+script:post-response {
+  test("Devuelve 200 OK", function() {
+    expect(res.status).to.equal(200);
+  });
+}

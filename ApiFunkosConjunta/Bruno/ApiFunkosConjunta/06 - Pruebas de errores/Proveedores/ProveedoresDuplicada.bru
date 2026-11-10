@@ -1,0 +1,29 @@
+meta {
+  name: Proveedores - Crear duplicado
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{baseUrl}}/api/proveedores
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "nombre": "Grupo Cladellas",
+    "contacto": "duplicado@proveedor.com",
+    "pais": "España"
+  }
+}
+
+script:post-response {
+  test("Devuelve 409 Conflict", function() {
+    expect(res.status).to.equal(409);
+  });
+}

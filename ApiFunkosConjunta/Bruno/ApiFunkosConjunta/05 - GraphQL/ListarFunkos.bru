@@ -1,0 +1,27 @@
+meta {
+  name: Listar Funkos
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/graphql
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "query": "{ funkos { items { id nombre categoriaId proveedorId stock precio imagen } total pagina tamanoPagina } }"
+  }
+}
+
+script:post-response {
+  test("Devuelve 200 OK", function() {
+    expect(res.status).to.equal(200);
+  });
+
+  test("No contiene errores GraphQL", function() {
+    expect(res.body.errors).to.be.undefined;
+  });
+}

@@ -1,0 +1,27 @@
+meta {
+  name: Actualizar categoria
+  type: http
+  seq: 4
+}
+
+put {
+  url: {{baseUrl}}/api/categorias/{{categoriaId}}
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "nombre": "Categoria Bruno Actualizada"
+  }
+}
+
+script:post-response {
+  test("Devuelve 200 OK", function() {
+    expect(res.status).to.equal(200);
+  });
+}

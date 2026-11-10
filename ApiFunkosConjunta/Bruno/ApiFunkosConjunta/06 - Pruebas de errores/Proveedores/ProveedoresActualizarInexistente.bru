@@ -1,0 +1,29 @@
+meta {
+  name: Proveedores - Actualizar inexistente
+  type: http
+  seq: 7
+}
+
+put {
+  url: {{baseUrl}}/api/proveedores/000000000000000000000000
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "nombre": "Proveedor inexistente",
+    "contacto": "inexistente@proveedor.com",
+    "pais": "España"
+  }
+}
+
+script:post-response {
+  test("Devuelve 404 Not Found", function() {
+    expect(res.status).to.equal(404);
+  });
+}
