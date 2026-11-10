@@ -1,0 +1,49 @@
+﻿services:
+  bruno:
+    # Imagen oficial de Bruno CLI.
+    image: usebruno/cli:latest
+    container_name: apifunkos-bruno-tests
+
+    # Montamos la colección en solo lectura.
+    volumes:
+      - .:/bruno:ro
+      - ./reports:/reports
+
+    # Ejecutamos las carpetas explícitamente.
+    command:
+      - run
+      - "01 - Autenticacion"
+      - "02 - Categorias"
+      - "03 - Proveedores"
+      - "04 - Funkos"
+      - "05 - GraphQL"
+      - "06 - Pruebas de errores/Categorias"
+      - "06 - Pruebas de errores/Funkos"
+      - "06 - Pruebas de errores/Proveedores"
+
+      # Entorno específico para Docker.
+      - --env-file
+      - environments/Docker.bru
+
+      # Pequeña pausa entre peticiones.
+      - --delay
+      - "250"
+
+      # Informes de ejecución.
+      - --reporter-json
+      - /reports/report.json
+      - --reporter-junit
+      - /reports/junit-report.xml
+      - --reporter-html
+      - /reports/report.html
+
+    # Permite acceder a la API que se ejecuta en el host.
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+    # No repetir automáticamente pruebas que pueden modificar datos.
+    restart: "no"
+
+networks:
+  default:
+    name: apifunkos-network
